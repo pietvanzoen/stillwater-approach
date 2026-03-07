@@ -1,4 +1,4 @@
-# Tower
+# Ghostwood Approach
 
 A card-based air traffic control game for the [Playdate](https://play.date) handheld console, set at **Ghostwood Municipal Airport** — a small remote airstrip in the Pacific Northwest with a Twin Peaks-inspired aesthetic (folksy but weird).
 
@@ -230,8 +230,8 @@ source/
 - Lint: `luacheck source/`
 - Format: `stylua source/`
 - Format check: `stylua --check source/`
-- Build: `pdc source/ builds/tower.pdx`
-- Run simulator: `open builds/tower.pdx`
+- Build: `pdc source/ builds/ghostwood-approach.pdx`
+- Run simulator: `open builds/ghostwood-approach.pdx`
 
 ### Lua conventions
 

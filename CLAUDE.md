@@ -1,4 +1,4 @@
-# Tower — Claude Code Instructions
+# Ghostwood Approach — Claude Code Instructions
 
 See [README.md](README.md) for game design, seasonal shifts, scoring, carriers, project structure, Lua conventions, and tooling commands.
 
