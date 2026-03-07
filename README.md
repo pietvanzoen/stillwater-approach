@@ -202,18 +202,18 @@ source/
 
 ## Build order (milestones)
 
-1. **Scaffold** — blank Playdate project runs, shows title screen "GHOSTWOOD MUNICIPAL", starts a shift on button press
-2. **One aircraft card** — a single aircraft appears with callsign, fuel, situation. Fuel ticks down visibly.
-3. **Queue & holding** — player can move aircraft between landing queue and holding stack
-4. **Multiple aircraft** — new aircraft arrive over time, player juggles several at once
-5. **Landing resolution** — aircraft at front of queue lands after a timer, shift progresses
-6. **Win/lose + score screen** — shift ends, score calculated
-7. **Season: Spring** — full Spring shift with traffic generation and conditions
-8. **Emergency cards** — medevac and SAR with time-based pressure
-9. **Remaining seasons** — Summer, Fall, Winter with their specific traffic and escalation
-10. **Logbook** — persistent across sessions using Playdate datastore
-11. **Weird escalation** — strange callsigns, logbook callbacks, season-specific events
-12. **Polish** — sound, animation, title screen, season select
+- [ ] **Scaffold** — blank Playdate project runs, shows title screen "GHOSTWOOD MUNICIPAL", starts a shift on button press
+- [ ] **One aircraft card** — a single aircraft appears with callsign, fuel, situation. Fuel ticks down visibly.
+- [ ] **Queue & holding** — player can move aircraft between landing queue and holding stack
+- [ ] **Multiple aircraft** — new aircraft arrive over time, player juggles several at once
+- [ ] **Landing resolution** — aircraft at front of queue lands after a timer, shift progresses
+- [ ] **Win/lose + score screen** — shift ends, score calculated
+- [ ] **Season: Spring** — full Spring shift with traffic generation and conditions
+- [ ] **Emergency cards** — medevac and SAR with time-based pressure
+- [ ] **Remaining seasons** — Summer, Fall, Winter with their specific traffic and escalation
+- [ ] **Logbook** — persistent across sessions using Playdate datastore
+- [ ] **Weird escalation** — strange callsigns, logbook callbacks, season-specific events
+- [ ] **Polish** — sound, animation, title screen, season select
 
 ---
 
