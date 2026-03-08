@@ -12,7 +12,7 @@ USAGE_LOG="$PROJECT_ROOT/.claude/usage-log.jsonl"
 # Read hook input
 input=$(cat)
 session_id=$(echo "$input" | jq -r '.session_id')
-transcript_path=$(echo "$input" | jq -r '.transcript_path')
+transcript_path=$(echo "$input" | jq -r '.transcript_path' | sed "s|^~|$HOME|")
 
 [[ -f "$transcript_path" ]] || exit 0
 
