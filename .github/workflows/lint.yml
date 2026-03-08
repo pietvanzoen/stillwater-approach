@@ -13,7 +13,7 @@ jobs:
       - name: Install luacheck
         run: |
           sudo apt-get update
-          sudo apt-get install -y luarocks
+          sudo apt-get install -y lua5.4 luarocks
           sudo luarocks install luacheck
 
       - name: Run luacheck
@@ -34,7 +34,7 @@ jobs:
       - name: Install busted
         run: |
           sudo apt-get update
-          sudo apt-get install -y luarocks
+          sudo apt-get install -y lua5.4 luarocks
           sudo luarocks install busted
 
       - name: Run tests

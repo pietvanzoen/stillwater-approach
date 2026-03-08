@@ -222,6 +222,7 @@ source/
 ### Prerequisites
 
 - [Playdate SDK](https://play.date/dev/) installed
+- [Lua](https://www.lua.org/) and [LuaRocks](https://luarocks.org/) (e.g. `brew install lua luarocks`)
 - [luacheck](https://github.com/mpeterv/luacheck) (`luarocks install luacheck`)
 - [StyLua](https://github.com/JohnnyMorganz/StyLua) (`brew install stylua`)
 - [busted](https://github.com/lunarmodules/busted) (`luarocks install busted`)
@@ -248,4 +249,4 @@ source/
 
 ### CI
 
-Pull requests are checked with luacheck and StyLua. Run `luacheck source/` and `stylua --check source/` locally before pushing.
+Pull requests are checked with luacheck, StyLua, and busted. Run `busted`, `luacheck source/ spec/`, and `stylua --check source/ spec/` locally before pushing.
