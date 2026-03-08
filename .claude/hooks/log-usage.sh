@@ -16,6 +16,11 @@ input=$(cat)
 session_id=$(echo "$input" | jq -r '.session_id')
 transcript_path=$(echo "$input" | jq -r '.transcript_path' | sed "s|^~|$HOME|")
 
+# Exit if required fields are missing or null (jq -r returns "null" for missing fields)
+if [[ -z "$session_id" || "$session_id" == "null" || -z "$transcript_path" || "$transcript_path" == "null" ]]; then
+  exit 0
+fi
+
 [[ -f "$transcript_path" ]] || exit 0
 
 transcript_dir=$(dirname "$transcript_path")
