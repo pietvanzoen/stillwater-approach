@@ -14,7 +14,7 @@ local STATE_SHIFT = "shift"
 local state = STATE_TITLE
 
 -- Title screen: shows airport name and waits for A press
-local function drawTitle()
+local function draw_title()
   gfx.clear(gfx.kColorWhite)
   gfx.drawTextAligned(
     Strings.title.heading,
@@ -26,7 +26,7 @@ local function drawTitle()
 end
 
 -- Shift screen: placeholder until game logic is added
-local function drawShift()
+local function draw_shift()
   gfx.clear(gfx.kColorWhite)
   gfx.drawTextAligned(
     Strings.shift.placeholder,
@@ -38,11 +38,11 @@ end
 
 function playdate.update()
   if state == STATE_TITLE then
-    drawTitle()
+    draw_title()
     if playdate.buttonJustPressed(playdate.kButtonA) then
       state = STATE_SHIFT
     end
   elseif state == STATE_SHIFT then
-    drawShift()
+    draw_shift()
   end
 end
