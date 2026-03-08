@@ -4,6 +4,10 @@ std = "lua54"
 globals = {
   "playdate",
   "import",
+  "kTextAlignment",
+  -- Module globals (Playdate's import doesn't return values, so modules assign to globals)
+  "Strings",
+  "Constants",
 }
 
 -- Ignore line length (StyLua handles formatting)

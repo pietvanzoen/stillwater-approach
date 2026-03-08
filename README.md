@@ -240,8 +240,11 @@ source/
 ### Lua conventions
 
 - **Locals everywhere**: always use `local` for variables and functions. No implicit globals.
-- **Module pattern**: each file returns a table. E.g. `local M = {} ... return M`
+- **Module globals (exception)**: Playdate's `import` doesn't return values, so a few shared modules (`Strings`, `Constants`, etc.) assign to named globals instead of returning a table. Declare these in `.luacheckrc` under `globals` and annotate the file with `-- luacheck: globals <Name>`.
+- **Module pattern**: most modules return a table. E.g. `local M = {} ... return M` (exception modules use the named-global pattern above).
 - **Naming**: `snake_case` for variables/functions, `PascalCase` for module tables (`Aircraft`, `Queue`)
+- **No magic numbers**: use `source/constants.lua` for screen dimensions, layout values, and game parameters.
+- **Centralised text**: all displayed strings live in `source/strings.lua`. Never hardcode UI text elsewhere.
 - **No metatables**: use the tables-as-objects pattern (`Aircraft.new()`) — no `__index` metatable inheritance unless explicitly needed
 - **Playdate idioms**: alias `playdate.graphics` as `gfx`. Use `import` not `require`. Keep `playdate.update()` thin — delegate to game module.
 - **Formatting**: StyLua handles formatting. 2-space indent, double quotes.
