@@ -224,12 +224,14 @@ source/
 - [Playdate SDK](https://play.date/dev/) installed
 - [luacheck](https://github.com/mpeterv/luacheck) (`luarocks install luacheck`)
 - [StyLua](https://github.com/JohnnyMorganz/StyLua) (`brew install stylua`)
+- [busted](https://github.com/lunarmodules/busted) (`luarocks install busted`)
 
 ### Commands
 
-- Lint: `luacheck source/`
-- Format: `stylua source/`
-- Format check: `stylua --check source/`
+- Test: `busted`
+- Lint: `luacheck source/ spec/`
+- Format: `stylua source/ spec/`
+- Format check: `stylua --check source/ spec/`
 - Build: `pdc source/ builds/ghostwood-approach.pdx`
 - Run simulator: `open builds/ghostwood-approach.pdx`
 
