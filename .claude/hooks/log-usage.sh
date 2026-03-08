@@ -3,8 +3,7 @@
 # Invoked by Claude Code as a Stop hook (receives JSON on stdin).
 #
 # Parses the main session transcript plus any sibling transcripts (subagents)
-# that started within the session's time range. Cost is calculated per-message
-# using each message's own model rates.
+# that started within the session's time range.
 #
 # Requires: jq
 
@@ -38,31 +37,14 @@ if [[ -n "$session_start" && "$session_start" != "null" && -n "$session_end" && 
   done
 fi
 
-# Calculate total token counts and cost across all transcripts.
-# Cost is computed per-message using each message's own model.
-# Rates per 1M tokens — update if pricing changes: https://www.anthropic.com/pricing
+# Sum token counts from all assistant messages across all transcripts
 data=$(cat "${transcripts[@]}" | jq -rn \
-  '[inputs | select(.type == "assistant" and (.message.usage != null) and (.message.model != null))] |
+  '[inputs | select(.type == "assistant") | .message.usage | select(. != null)] |
    {
-     input_tokens:          (map(.message.usage.input_tokens                  // 0) | add // 0),
-     output_tokens:         (map(.message.usage.output_tokens                 // 0) | add // 0),
-     cache_read_tokens:     (map(.message.usage.cache_read_input_tokens       // 0) | add // 0),
-     cache_creation_tokens: (map(.message.usage.cache_creation_input_tokens   // 0) | add // 0),
-     cost_usd: (
-       map(
-         . as $m |
-         ($m.message.model // "" | if
-           startswith("claude-opus-4-6")      then {ir: 15.00, outr: 75.00, crr: 1.50,  ccr: 18.75}
-           elif startswith("claude-sonnet-4") then {ir:  3.00, outr: 15.00, crr: 0.30,  ccr:  3.75}
-           elif startswith("claude-haiku-4")  then {ir:  0.80, outr:  4.00, crr: 0.08,  ccr:  1.00}
-           else                                    {ir:  3.00, outr: 15.00, crr: 0.30,  ccr:  3.75}
-         end) as $r |
-         (($m.message.usage.input_tokens                // 0) * $r.ir   +
-          ($m.message.usage.output_tokens               // 0) * $r.outr +
-          ($m.message.usage.cache_read_input_tokens     // 0) * $r.crr  +
-          ($m.message.usage.cache_creation_input_tokens // 0) * $r.ccr) / 1000000
-       ) | add // 0 | . * 10000 | round / 10000
-     )
+     input_tokens:          (map(.input_tokens                  // 0) | add // 0),
+     output_tokens:         (map(.output_tokens                 // 0) | add // 0),
+     cache_read_tokens:     (map(.cache_read_input_tokens       // 0) | add // 0),
+     cache_creation_tokens: (map(.cache_creation_input_tokens   // 0) | add // 0)
    }')
 
 # Skip empty sessions
@@ -74,7 +56,7 @@ date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 entry=$(echo "$data" | jq -c \
   --arg session_id "$session_id" \
   --arg date       "$date" \
-  '{session_id: $session_id, date: $date, cost_usd,
+  '{session_id: $session_id, date: $date,
     input_tokens, output_tokens, cache_read_tokens, cache_creation_tokens}')
 
 touch "$USAGE_LOG"
