@@ -200,12 +200,6 @@ source/
 
 ---
 
-## TODO
-
-- [x] Track Claude Code usage costs per session (`.claude/usage-log.jsonl`, auto-appended via Stop hook)
-
----
-
 ## Build order (milestones)
 
 - [ ] **Scaffold** — blank Playdate project runs, shows title screen "GHOSTWOOD MUNICIPAL", starts a shift on button press

@@ -17,7 +17,13 @@ Begin with **milestone 1**: a runnable Playdate project scaffold with a title sc
 
 ## Usage tracking
 
-When committing, include `.claude/usage-log.jsonl` by temporarily lifting the assume-unchanged flag:
+After a fresh clone, mark the file as assume-unchanged so it doesn't show as dirty:
+
+```
+git update-index --assume-unchanged .claude/usage-log.jsonl
+```
+
+When committing, temporarily lift the flag to include the latest data:
 
 ```
 git update-index --no-assume-unchanged .claude/usage-log.jsonl

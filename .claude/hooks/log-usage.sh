@@ -26,8 +26,8 @@ fi
 transcript_dir=$(dirname "$transcript_path")
 
 # Get the session's time range to identify sibling transcripts (subagents)
-session_start=$(jq -rn 'first(inputs | select(.timestamp? != null)) | .timestamp' "$transcript_path")
-session_end=$(jq -rn 'last(inputs | select(.timestamp? != null)) | .timestamp' "$transcript_path")
+session_start=$(jq -rn 'first(inputs | select(.timestamp? != null)) | .timestamp' "$transcript_path" 2>/dev/null || true)
+session_end=$(jq -rn 'last(inputs | select(.timestamp? != null)) | .timestamp' "$transcript_path" 2>/dev/null || true)
 
 # Collect main transcript plus siblings whose first timestamp falls within our session
 transcripts=("$transcript_path")
@@ -79,7 +79,7 @@ total=$(echo "$data" | jq '[.[] | .input_tokens + .output_tokens] | add // 0')
 energy_wh=$(echo "$data" | jq '
   to_entries | map(
     (.key | if
-      startswith("claude-opus-4-6")      then 0.003
+      startswith("claude-opus-4")        then 0.003
       elif startswith("claude-sonnet-4") then 0.0005
       elif startswith("claude-haiku-4")  then 0.0001
       else                                    0.0005
