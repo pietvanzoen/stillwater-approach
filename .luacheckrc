@@ -8,6 +8,8 @@ globals = {
   -- Module globals (Playdate's import doesn't return values, so modules assign to globals)
   "Strings",
   "Constants",
+  "Aircraft",
+  "UI",
 }
 
 -- Ignore line length (StyLua handles formatting)
