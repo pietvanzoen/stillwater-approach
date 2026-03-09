@@ -1,4 +1,4 @@
-Prepare and publish a versioned release of Ghostwood Approach.
+Prepare and publish a versioned release of Stillwater Approach.
 
 ## Steps
 

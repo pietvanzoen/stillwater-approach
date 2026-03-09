@@ -24,13 +24,13 @@ jobs:
           echo "$GITHUB_WORKSPACE/$SDK_DIR/bin" >> "$GITHUB_PATH"
 
       - name: Build
-        run: pdc source/ ghostwood-approach.pdx
+        run: pdc source/ stillwater-approach.pdx
 
       - name: Package
-        run: zip -r "ghostwood-approach-${{ github.ref_name }}.zip" ghostwood-approach.pdx
+        run: zip -r "stillwater-approach-${{ github.ref_name }}.zip" stillwater-approach.pdx
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          files: "ghostwood-approach-${{ github.ref_name }}.zip"
+          files: "stillwater-approach-${{ github.ref_name }}.zip"
           generate_release_notes: true

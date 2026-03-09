@@ -1,4 +1,4 @@
-# Ghostwood Approach — Claude Code Instructions
+# Stillwater Approach — Claude Code Instructions
 
 See [README.md](README.md) for game design, seasonal shifts, scoring, carriers, project structure, Lua conventions, and tooling commands.
 
@@ -46,7 +46,7 @@ git update-index --skip-worktree .claude/usage-log.jsonl
 To build and launch the simulator with stdout log capture (enables reading `print()` output):
 
 ```
-pdc source/ builds/ghostwood-approach.pdx && "$PLAYDATE_SDK_PATH/bin/Playdate Simulator.app/Contents/MacOS/Playdate Simulator" builds/ghostwood-approach.pdx
+pdc source/ builds/stillwater-approach.pdx && "$PLAYDATE_SDK_PATH/bin/Playdate Simulator.app/Contents/MacOS/Playdate Simulator" builds/stillwater-approach.pdx
 ```
 
 Run this as a background task and read the output file to access simulator logs.

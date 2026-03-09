@@ -58,7 +58,7 @@ function playdate.update()
     draw_title()
     if playdate.buttonJustPressed(playdate.kButtonA) then
       -- Initialise a fresh aircraft when the shift begins
-      shift_aircraft = Aircraft.new("GHOSTWOOD AIR 4", 90, "Normal")
+      shift_aircraft = Aircraft.new("STILLWATER AIR 4", 90, "Normal")
       last_time = playdate.getCurrentTimeMilliseconds()
       state = STATE_SHIFT
     end
