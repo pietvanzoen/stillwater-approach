@@ -8,7 +8,13 @@ I am new to Lua and new to game development. Write clean, well-commented code an
 
 ## Current milestone
 
-Begin with **milestone 1**: a runnable Playdate project scaffold with a title screen that reads "GHOSTWOOD MUNICIPAL" and transitions to an empty shift screen on button press. Make sure it compiles and runs in the simulator before adding any game logic.
+Begin with **milestone 2**: a single aircraft card appears on the shift screen with callsign, fuel, and situation. Fuel ticks down visibly each second. No queue management yet — just one card on screen with a live countdown.
+
+## Pull request instructions
+
+When creating a PR for a completed milestone:
+1. Check off the corresponding milestone checkbox in `README.md` (change `- [ ]` to `- [x]`)
+2. Include the milestone name in the PR title (e.g. "Milestone 2: one aircraft card")
 
 ## Playdate references
 
@@ -32,6 +38,16 @@ git update-index --skip-worktree .claude/usage-log.jsonl
 ```
 
 The file is auto-updated after each response via a Stop hook.
+
+## Running the simulator with logs
+
+To build and launch the simulator with stdout log capture (enables reading `print()` output):
+
+```
+pdc source/ builds/ghostwood-approach.pdx && "$PLAYDATE_SDK_PATH/bin/Playdate Simulator.app/Contents/MacOS/Playdate Simulator" builds/ghostwood-approach.pdx
+```
+
+Run this as a background task and read the output file to access simulator logs.
 
 ## Technical notes
 
