@@ -12,4 +12,16 @@ Constants = {
   -- Title screen layout
   TITLE_HEADING_Y = 100,
   TITLE_PROMPT_Y = 140,
+
+  -- Aircraft card layout
+  CARD = {
+    X = 20,
+    Y = 20,
+    WIDTH = 360,
+    HEIGHT = 160,
+    PADDING = 12,
+    CALLSIGN_Y = 32,
+    FUEL_Y = 80,
+    SITUATION_Y = 128,
+  },
 }

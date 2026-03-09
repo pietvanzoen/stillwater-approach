@@ -10,4 +10,8 @@ Strings = {
   shift = {
     placeholder = "SHIFT",
   },
+  card = {
+    fuel_label = "FUEL",
+    situation_label = "STATUS",
+  },
 }
