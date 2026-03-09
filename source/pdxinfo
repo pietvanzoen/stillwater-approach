@@ -1,0 +1,6 @@
+name=Ghostwood Approach
+author=pietvanzoen
+description=Air traffic control game for Playdate
+bundleID=com.pietvanzoen.ghostwood-approach
+version=0.1.0
+buildNumber=1
