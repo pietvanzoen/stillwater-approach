@@ -10,6 +10,7 @@ globals = {
   "Constants",
   "Aircraft",
   "UI",
+  "log",
 }
 
 -- Ignore line length (StyLua handles formatting)

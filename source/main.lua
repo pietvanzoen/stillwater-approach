@@ -1,6 +1,16 @@
 -- Ghostwood Approach
 -- Entry point for the Playdate game
 
+-- Debug logging: set to false before release to silence all log() calls
+local DEBUG <const> = true
+
+-- luacheck: globals log
+function log(...)
+  if DEBUG then
+    print(...)
+  end
+end
+
 import("CoreLibs/graphics")
 import("strings")
 import("constants")
