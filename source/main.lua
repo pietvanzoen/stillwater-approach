@@ -1,4 +1,4 @@
--- Ghostwood Approach
+-- Stillwater Approach
 -- Entry point for the Playdate game
 
 -- Debug logging: set to false before release to silence all log() calls
