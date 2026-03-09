@@ -1,16 +1,16 @@
-# Ghostwood Approach
+# Stillwater Approach
 
-A card-based air traffic control game for the [Playdate](https://play.date) handheld console, set at **Ghostwood Municipal Airport** — a small remote airstrip in the Pacific Northwest with a Twin Peaks-inspired aesthetic (folksy but weird).
+A card-based air traffic control game for the [Playdate](https://play.date) handheld console, set at **Stillwater Municipal Airport** — a small remote airstrip in the Pacific Northwest with a Twin Peaks-inspired aesthetic (folksy but weird).
 
 ---
 
 ## Setting
 
-**Ghostwood Municipal Airport — KGWD**
+**Stillwater Municipal Airport — KSTW**
 
-A single-runway airport nestled in a river valley between two forested ridgelines in the Cascades foothills of Washington State. Surrounded by old-growth timber (most of it logged — locals don't go into the part that wasn't). The **Sill River** runs along the valley floor and floods every few years. Fog rolls in from the coast unpredictably. A mountain pass to the east gets socked in with clouds in winter.
+A single-runway airport nestled in a river valley between two forested ridgelines in the Cascades foothills of Washington State. Surrounded by old-growth timber (most of it logged — locals don't go into the part that wasn't). A river runs along the valley floor and floods every few years. Fog rolls in from the coast unpredictably. A mountain pass to the east gets socked in with clouds in winter.
 
-Population of Ghostwood: ~1,200. Timber industry. A diner. A lodge up in the hills. The airport has been here since the 1950s. Old equipment. Flickering fluorescents. A paper logbook.
+Population of Stillwater: ~1,200. Timber industry. A diner. A lodge up in the hills. The airport has been here since the 1950s. Old equipment. Flickering fluorescents. A paper logbook.
 
 You are the only one in the tower tonight.
 
@@ -53,7 +53,7 @@ The shift ends after all scheduled aircraft for that season have landed (or one 
 
 | Callsign | Type | Notes |
 |---|---|---|
-| Ghostwood Air | Local commuter (Dash 8) | Runs to Seattle, Portland, Spokane. Workhorse of the airport. |
+| Stillwater Air | Local commuter (Dash 8) | Runs to Seattle, Portland, Spokane. Workhorse of the airport. |
 | Sill Valley Cargo | Freight prop | Timber industry supply runs |
 | Pacific Timber Air | King Air charter | Company plane for the mill |
 | Quillayute Charters | Small prop | Coastal hops. Fishy reputation. |
@@ -72,7 +72,7 @@ The shift ends after all scheduled aircraft for that season have landed (or one 
 | Type | Notes |
 |---|---|
 | Cessna 172 | Weekend pilots, charters, spotters |
-| De Havilland Dash 8 | Ghostwood Air's commuter workhorse |
+| De Havilland Dash 8 | Stillwater Air's commuter workhorse |
 | Beechcraft King Air | Corporate, timber company |
 | Bell 206 helicopter | Medevac, SAR |
 | Bombardier Q400 | Occasional larger commuter |
@@ -97,7 +97,7 @@ The shift ends after all scheduled aircraft for that season have landed (or one 
 
 ## Radio flavor text examples
 
-- *"Ghostwood Air 4, reporting smooth skies over the pass"*
+- *"Stillwater Air 4, reporting smooth skies over the pass"*
 - *"Visibility dropping. Fog coming in off the Sill."*
 - *"Cargo shifted on approach. Declaring emergency."*
 - *"Pilot says he's been flying this route 22 years and something looks different tonight."*
@@ -117,7 +117,7 @@ Each shift is a self-contained run with its own conditions, traffic mix, emergen
 *April. The Sill River is running high. Mud season.*
 
 - **Conditions:** Low cloud ceiling, intermittent rain, fog rolling up the valley. Visibility variable.
-- **Traffic:** Light. Ghostwood Air commuters, a few small props, season's first charters.
+- **Traffic:** Light. Stillwater Air commuters, a few small props, season's first charters.
 - **Emergencies:** Search & Rescue (missing hikers, snowmelt season), one medevac, a small plane caught in weather over the pass.
 - **Weird escalation:** A pilot mentions the old Packard logging road is flooded. Says he saw something in the water from altitude. Doesn't elaborate.
 - **Difficulty:** Tutorial-paced. Forgiving. Introduces core mechanics.
@@ -141,7 +141,7 @@ Each shift is a self-contained run with its own conditions, traffic mix, emergen
 *October. Timber season winding down. Days getting short.*
 
 - **Conditions:** Clear and cold in the morning, fog by afternoon. Early darkness catches pilots off guard. First frost on the runway possible.
-- **Traffic:** Medium. Timber company charters wrapping up. Hunting season brings small props. Ghostwood Air cuts service to 3 days a week.
+- **Traffic:** Medium. Timber company charters wrapping up. Hunting season brings small props. Stillwater Air cuts service to 3 days a week.
 - **Emergencies:** Sheriff SAR (hunter didn't come back). Timber company King Air with a sick passenger. One night flight that shouldn't be there.
 - **Weird escalation:** A DC-3 checks in. Tail number is in your logbook — from a shift three years ago. That flight never landed.
 - **Difficulty:** Medium. Fewer planes but stranger ones. Fog timing creates pressure.
@@ -155,7 +155,7 @@ Each shift is a self-contained run with its own conditions, traffic mix, emergen
 - **Conditions:** Snow, ice, reduced runway length. Whiteout possible. Equipment running slow in the cold. The tower heater is unreliable.
 - **Traffic:** Sparse but critical. Every flight that comes in is coming in because it has to. Holiday medevacs. A mail plane. The Coast Guard diversion that won't explain itself.
 - **Emergencies:** Medevac in a snowstorm. A plane that declared emergency over the pass and then went silent. Coast Guard 1471, again.
-- **Weird escalation:** On the last approach of the night, a voice checks in on a frequency that hasn't been active since 1987. Callsign: Ghostwood Air 1.
+- **Weird escalation:** On the last approach of the night, a voice checks in on a frequency that hasn't been active since 1987. Callsign: Stillwater Air 1.
 - **Difficulty:** Medium-hard. Low volume but high stakes. Every decision matters more.
 - **Scoring bonus:** Clean runway landings (no ice-related go-arounds)
 
@@ -203,7 +203,7 @@ source/
 
 ## Build order (milestones)
 
-- [x] **Scaffold** — blank Playdate project runs, shows title screen "GHOSTWOOD MUNICIPAL", starts a shift on button press
+- [x] **Scaffold** — blank Playdate project runs, shows title screen "STILLWATER APPROACH", starts a shift on button press
 - [x] **One aircraft card** — a single aircraft appears with callsign, fuel, situation. Fuel ticks down visibly.
 - [ ] **Queue & holding** — player can move aircraft between landing queue and holding stack
 - [ ] **Multiple aircraft** — new aircraft arrive over time, player juggles several at once
@@ -235,8 +235,8 @@ source/
 - Lint: `luacheck source/ spec/`
 - Format: `stylua source/ spec/`
 - Format check: `stylua --check source/ spec/`
-- Build: `pdc source/ builds/ghostwood-approach.pdx`
-- Run simulator: `open builds/ghostwood-approach.pdx`
+- Build: `pdc source/ builds/stillwater-approach.pdx`
+- Run simulator: `open builds/stillwater-approach.pdx`
 
 ### Lua conventions
 

@@ -4,7 +4,7 @@
 -- luacheck: globals Strings
 Strings = {
   title = {
-    heading = "GHOSTWOOD MUNICIPAL",
+    heading = "STILLWATER APPROACH",
     prompt = "press Ⓐ to begin shift",
   },
   shift = {
