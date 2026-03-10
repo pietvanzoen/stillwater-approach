@@ -23,6 +23,11 @@ local function draw_cell(value, label, center_x, value_y, label_y)
   gfx.drawTextAligned(label, center_x, label_y, kTextAlignment.center)
 end
 
+-- Returns the horizontal centre of a column spanning x1..x2.
+local function col_center(x1, x2)
+  return math.floor((x1 + x2) / 2)
+end
+
 -- Draws the aircraft card as a flight progress strip at position (x, y).
 --
 --   ┌──┬──────────┬────────┬────────┬──────────────────┐
@@ -32,33 +37,36 @@ end
 --
 -- Four columns separated by vertical dividers. Each column shows
 -- a value on the top row and a small label on the bottom row.
--- If focused is true, the card is drawn with an inverted tab and border highlight.
+-- Divider constants (DIV1_X etc.) are offsets from x, not absolute positions.
+-- If focused is true, the card border is drawn thicker to indicate selection.
 function UI.draw_aircraft_card(aircraft, x, y, focused)
   local c = Constants.CARD
   local s = Strings.card
 
   if focused then
-    -- Highlighted border
-    gfx.setLineWidth(2)
+    gfx.setLineWidth(c.FOCUSED_LINE_WIDTH)
     gfx.drawRect(x, y, c.WIDTH, c.HEIGHT)
     gfx.setLineWidth(1)
-    -- Inverted tab (white text on black background)
-    gfx.fillRect(x, y, c.TAB_WIDTH, c.HEIGHT)
   else
     gfx.drawRect(x, y, c.WIDTH, c.HEIGHT)
-    gfx.fillRect(x, y, c.TAB_WIDTH, c.HEIGHT)
   end
 
-  -- Column dividers
-  gfx.drawLine(c.DIV1_X, y, c.DIV1_X, y + c.HEIGHT - 1)
-  gfx.drawLine(c.DIV2_X, y, c.DIV2_X, y + c.HEIGHT - 1)
-  gfx.drawLine(c.DIV3_X, y, c.DIV3_X, y + c.HEIGHT - 1)
+  -- Solid left tab (like a physical strip-holder bay)
+  gfx.fillRect(x, y, c.TAB_WIDTH, c.HEIGHT)
+
+  -- Column dividers (offsets from x)
+  local div1 = x + c.DIV1_X
+  local div2 = x + c.DIV2_X
+  local div3 = x + c.DIV3_X
+  gfx.drawLine(div1, y, div1, y + c.HEIGHT - 1)
+  gfx.drawLine(div2, y, div2, y + c.HEIGHT - 1)
+  gfx.drawLine(div3, y, div3, y + c.HEIGHT - 1)
 
   -- Column centre x positions
-  local col1_cx = math.floor((x + c.TAB_WIDTH + c.DIV1_X) / 2)
-  local col2_cx = math.floor((c.DIV1_X + c.DIV2_X) / 2)
-  local col3_cx = math.floor((c.DIV2_X + c.DIV3_X) / 2)
-  local col4_cx = math.floor((c.DIV3_X + x + c.WIDTH) / 2)
+  local col1_cx = col_center(x + c.TAB_WIDTH, div1)
+  local col2_cx = col_center(div1, div2)
+  local col3_cx = col_center(div2, div3)
+  local col4_cx = col_center(div3, x + c.WIDTH)
 
   -- Absolute y positions for value and label rows
   local value_y = y + c.VALUE_Y_OFFSET
@@ -80,7 +88,7 @@ local function draw_section_header(text, y)
 end
 
 -- Draws the full shift screen: LANDING section header + cards, HOLDING section header + cards.
--- cursor is { section = "landing"|"holding", index = 1 }
+-- cursor is { section = Constants.SECTION_LANDING|SECTION_HOLDING, index = 1 }
 function UI.draw_shift_screen(shift_state, cursor)
   local c = Constants
   gfx.clear(gfx.kColorWhite)
@@ -96,7 +104,7 @@ function UI.draw_shift_screen(shift_state, cursor)
 
   -- Landing cards
   for i, aircraft in ipairs(shift_state.landing) do
-    local focused = cursor.section == "landing" and cursor.index == i
+    local focused = cursor.section == c.SECTION_LANDING and cursor.index == i
     UI.draw_aircraft_card(aircraft, c.CARD.X, current_y, focused)
     current_y = current_y + card_step
   end
@@ -107,7 +115,7 @@ function UI.draw_shift_screen(shift_state, cursor)
 
   -- Holding cards
   for i, aircraft in ipairs(shift_state.holding) do
-    local focused = cursor.section == "holding" and cursor.index == i
+    local focused = cursor.section == c.SECTION_HOLDING and cursor.index == i
     UI.draw_aircraft_card(aircraft, c.CARD.X, current_y, focused)
     current_y = current_y + card_step
   end

@@ -20,6 +20,12 @@ describe("Queue", function()
   end)
 
   describe("Queue.promote", function()
+    it("returns true on success", function()
+      local q = Queue.new()
+      q.holding[1] = make_aircraft("GA4", 90)
+      assert.is_true(Queue.promote(q, 1))
+    end)
+
     it("appends aircraft to bottom of landing", function()
       local q = Queue.new()
       local a = make_aircraft("GA4", 90)
@@ -62,14 +68,14 @@ describe("Queue", function()
     end)
 
     it("returns false when landing list is full", function()
-      local q = Queue.new()
+      local q = Queue.new(3)
       q.landing = { make_aircraft("A", 90), make_aircraft("B", 90), make_aircraft("C", 90) }
       q.holding[1] = make_aircraft("D", 90)
       assert.is_false(Queue.promote(q, 1))
     end)
 
     it("does not modify state when landing list is full", function()
-      local q = Queue.new()
+      local q = Queue.new(3)
       local a1, a2, a3 = make_aircraft("A", 90), make_aircraft("B", 90), make_aircraft("C", 90)
       local a4 = make_aircraft("D", 90)
       q.landing = { a1, a2, a3 }

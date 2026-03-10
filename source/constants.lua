@@ -24,10 +24,12 @@ Constants = {
     TAB_WIDTH = 6, -- solid left-edge tab, like a physical strip holder
     CARD_GAP = 3, -- vertical gap between stacked cards
 
-    -- Absolute x positions of the three column dividers
-    DIV1_X = 150, -- right edge of callsign column
-    DIV2_X = 210, -- right edge of altitude column
-    DIV3_X = 270, -- right edge of fuel column
+    -- X offsets from the card's left edge (x) for the three column dividers
+    DIV1_X = 140, -- right edge of callsign column
+    DIV2_X = 200, -- right edge of altitude column
+    DIV3_X = 260, -- right edge of fuel column
+
+    FOCUSED_LINE_WIDTH = 2, -- border line width for the focused card
 
     -- Y offsets from the strip top for the two text rows in each column
     VALUE_Y_OFFSET = 6,
@@ -38,4 +40,8 @@ Constants = {
   SECTION_HEADER_HEIGHT = 14,
   CARD_LIST_START_Y = 4,
   MAX_LANDING = 3,
+
+  -- Section name identifiers used in cursor state
+  SECTION_LANDING = "landing",
+  SECTION_HOLDING = "holding",
 }

@@ -28,7 +28,7 @@ local state = STATE_TITLE
 
 -- Shift state: queue of landing and holding aircraft, cursor position, and last frame timestamp
 local shift_state = nil -- { landing = {}, holding = {} }
-local cursor = nil -- { section = "landing"|"holding", index = 1 }
+local cursor = nil -- { section = Constants.SECTION_LANDING|SECTION_HOLDING, index = 1 }
 local last_time = nil
 
 -- Title screen: shows airport name and waits for A press
@@ -47,8 +47,8 @@ end
 local function cursor_up()
   if cursor.index > 1 then
     cursor.index = cursor.index - 1
-  elseif cursor.section == "holding" and #shift_state.landing > 0 then
-    cursor.section = "landing"
+  elseif cursor.section == Constants.SECTION_HOLDING and #shift_state.landing > 0 then
+    cursor.section = Constants.SECTION_LANDING
     cursor.index = #shift_state.landing
   end
 end
@@ -58,8 +58,8 @@ local function cursor_down()
   local cur_list = shift_state[cursor.section]
   if cursor.index < #cur_list then
     cursor.index = cursor.index + 1
-  elseif cursor.section == "landing" and #shift_state.holding > 0 then
-    cursor.section = "holding"
+  elseif cursor.section == Constants.SECTION_LANDING and #shift_state.holding > 0 then
+    cursor.section = Constants.SECTION_HOLDING
     cursor.index = 1
   end
 end
@@ -71,7 +71,7 @@ local function handle_shift_input()
   elseif playdate.buttonJustPressed(playdate.kButtonDown) then
     cursor_down()
   elseif playdate.buttonJustPressed(playdate.kButtonA) then
-    if cursor.section == "holding" then
+    if cursor.section == Constants.SECTION_HOLDING then
       Queue.promote(shift_state, cursor.index)
       -- Keep cursor in bounds after promotion may have shrunk the holding list
       cursor.index = math.min(cursor.index, math.max(1, #shift_state.holding))
@@ -96,12 +96,12 @@ function playdate.update()
     draw_title()
     if playdate.buttonJustPressed(playdate.kButtonA) then
       -- Initialise queue: 1 landing + 3 holding to demonstrate the landing cap
-      shift_state = Queue.new()
+      shift_state = Queue.new(Constants.MAX_LANDING)
       shift_state.landing[1] = Aircraft.new("STILLWATER AIR 4", 90, 3000, "Normal")
       shift_state.holding[1] = Aircraft.new("SVC 12", 120, 8000, "Cargo Shift")
       shift_state.holding[2] = Aircraft.new("TANKER 81", 75, 5000, "Low Fuel")
       shift_state.holding[3] = Aircraft.new("QUILLAYUTE 3", 140, 6000, "Normal")
-      cursor = { section = "landing", index = 1 }
+      cursor = { section = Constants.SECTION_LANDING, index = 1 }
       last_time = playdate.getCurrentTimeMilliseconds()
       state = STATE_SHIFT
     end

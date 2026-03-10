@@ -43,7 +43,7 @@ The shift ends after all scheduled aircraft for that season have landed (or one 
 
 - **D-pad up/down** — navigate cursor through landing list and holding list (cursor crosses section boundary automatically)
 - **A button (on holding card)** — promote aircraft to bottom of landing list (max 3)
-- **A button (on landing card)** — no-op; landing list is immutable once set
+- **A button (on landing card)** — no-op; landing cards can't be selected or moved directly
 - **B button** — cancel / back
 - **Crank** — scroll through cards (secondary, nice to have)
 

@@ -4,24 +4,24 @@
 -- luacheck: globals Queue
 Queue = {}
 
-local MAX_LANDING = 3
-
 -- Returns a new queue state with empty landing and holding lists.
-function Queue.new()
-  return { landing = {}, holding = {} }
+-- max_landing caps how many aircraft can be in the landing list (default 3).
+function Queue.new(max_landing)
+  return { landing = {}, holding = {}, max_landing = max_landing or 3 }
 end
 
 -- Moves the aircraft at `index` in holding to the bottom of landing.
--- Returns false (no-op) if index is out of range or landing list is full.
+-- Returns true on success, false if index is out of range or landing list is full.
 function Queue.promote(state, index)
   if index < 1 or index > #state.holding then
     return false
   end
-  if #state.landing >= MAX_LANDING then
+  if #state.landing >= state.max_landing then
     return false
   end
   local aircraft = table.remove(state.holding, index)
   state.landing[#state.landing + 1] = aircraft
+  return true
 end
 
 -- Advances time by dt seconds for every aircraft in both lists.
