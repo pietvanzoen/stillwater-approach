@@ -36,7 +36,7 @@ local last_time = nil
 local function draw_title()
   Cover.draw()
   gfx.setColor(gfx.kColorBlack)
-  gfx.drawTextAligned(Strings.title.prompt, Constants.SCREEN_CENTER_X, 10, kTextAlignment.center)
+  gfx.drawTextAligned(Strings.title.prompt, Constants.SCREEN_CENTER_X, Constants.TITLE_PROMPT_Y, kTextAlignment.center)
 end
 
 -- Moves cursor up, crossing from holding into landing if at the top of holding.

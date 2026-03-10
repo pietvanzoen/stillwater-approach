@@ -2,6 +2,8 @@
 -- Cover art: tower-centric scene with fog, runway, and approaching aircraft
 -- luacheck: globals Cover
 
+import("strings")
+
 local gfx <const> = playdate.graphics
 
 Cover = {}
@@ -106,6 +108,7 @@ local function draw_runway()
   gfx.drawLine(80, runway_y, 320, runway_y)
 
   -- Center line dashes
+  gfx.setColor(gfx.kColorWhite)
   gfx.setLineWidth(1)
   for x = 100, 300, 15 do
     gfx.drawLine(x, runway_y, x + 8, runway_y)
@@ -152,7 +155,7 @@ function Cover.draw()
   gfx.setLineWidth(1)
   gfx.drawRect(60, 210, 280, 24)
   gfx.drawTextAligned(
-    "STILLWATER APPROACH",
+    Strings.title.heading,
     200,
     215,
     kTextAlignment.center

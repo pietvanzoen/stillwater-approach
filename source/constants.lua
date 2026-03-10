@@ -11,7 +11,7 @@ Constants = {
 
   -- Title screen layout
   TITLE_HEADING_Y = 100,
-  TITLE_PROMPT_Y = 140,
+  TITLE_PROMPT_Y = 10,
 
   -- Aircraft card layout (flight progress strip style).
   -- Strip is horizontally divided into four columns by vertical dividers.
