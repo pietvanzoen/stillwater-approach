@@ -23,23 +23,9 @@ When creating a PR for a completed milestone:
 
 ## Usage tracking
 
-The file `.claude/usage-log.jsonl` is auto-updated after each response via a Stop hook. It is marked with `skip-worktree` so it stays invisible in `git status` and doesn't block branch switches.
+Session usage is logged to `.claude/usage-log.jsonl.local` (gitignored) via a Stop hook. The pre-commit hook automatically copies it over `.claude/usage-log.jsonl` before staging, so it's included in commits without extra steps.
 
-**Always include it in commits.** Use this sequence whenever committing (including during `/commit`):
-
-```
-git update-index --no-skip-worktree .claude/usage-log.jsonl
-git add .claude/usage-log.jsonl
-git update-index --skip-worktree .claude/usage-log.jsonl
-```
-
-Then stage and commit the rest of the files as normal.
-
-After a fresh clone, set the flag once:
-
-```
-git update-index --skip-worktree .claude/usage-log.jsonl
-```
+No manual workflow needed — just commit normally.
 
 ## Running the simulator with logs
 

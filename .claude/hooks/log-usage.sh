@@ -10,7 +10,7 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(git rev-parse --show-toplevel)"
-USAGE_LOG="$PROJECT_ROOT/.claude/usage-log.jsonl"
+USAGE_LOG="$PROJECT_ROOT/.claude/usage-log.jsonl.local"
 
 input=$(cat)
 session_id=$(echo "$input" | jq -r '.session_id')
