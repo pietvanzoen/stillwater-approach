@@ -17,7 +17,7 @@ help:
 	@echo "  make format         Format code with stylua"
 	@echo "  make format-check   Check formatting without changes"
 	@echo "  make sim            Build and run simulator with logs"
-	@echo "  make release        Update pdxinfo version (requires VERSION=x.y.z)"
+	@echo "  make release        Bump version, tag, and push release (requires VERSION=x.y.z)"
 	@echo "  make clean          Remove build artifacts"
 	@echo "  make help           Show this message"
 
@@ -50,7 +50,12 @@ release:
 	sed -i.bak 's/version=.*/version=$(VERSION)/' $(PDXINFO); \
 	sed -i.bak "s/buildNumber=.*/buildNumber=$$new_build/" $(PDXINFO); \
 	rm $(PDXINFO).bak; \
-	echo "Updated $(PDXINFO): version=$(VERSION), buildNumber=$$new_build"
+	git add $(PDXINFO); \
+	git commit -m "Release v$(VERSION)"; \
+	git tag v$(VERSION); \
+	git push origin HEAD; \
+	git push origin v$(VERSION); \
+	echo "✓ Released v$(VERSION)"
 
 clean:
 	rm -rf $(BUILD_DIR)
