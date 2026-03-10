@@ -1,7 +1,7 @@
 .PHONY: build test lint format format-check sim help clean
 
 PDC = pdc
-SIMULATOR = $(PLAYDATE_SDK_PATH)/bin/Playdate\ Simulator.app/Contents/MacOS/Playdate\ Simulator
+SIMULATOR = $(PLAYDATE_SDK_PATH)/bin/Playdate Simulator.app/Contents/MacOS/Playdate Simulator
 SOURCE_DIR = source
 BUILD_DIR = builds
 PDX_FILE = $(BUILD_DIR)/stillwater-approach.pdx
@@ -20,7 +20,8 @@ help:
 	@echo "  make help           Show this message"
 
 build:
-	$(PDC) $(SOURCE_DIR) $(BUILD_DIR)/stillwater-approach.pdx
+	mkdir -p $(BUILD_DIR)
+	$(PDC) $(SOURCE_DIR) $(PDX_FILE)
 
 test:
 	busted
