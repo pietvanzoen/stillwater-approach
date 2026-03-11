@@ -6,8 +6,10 @@ Queue = {}
 
 -- Returns a new queue state with empty landing and holding lists.
 -- max_landing caps how many aircraft can be in the landing list (default 3).
+-- schedule and next_arrival are initialised to safe defaults so check_arrivals
+-- can be called on a fresh queue without error.
 function Queue.new(max_landing)
-  return { landing = {}, holding = {}, max_landing = max_landing or 3 }
+  return { landing = {}, holding = {}, max_landing = max_landing or 3, schedule = {}, next_arrival = 1 }
 end
 
 -- Moves the aircraft at `index` in holding to the bottom of landing.
