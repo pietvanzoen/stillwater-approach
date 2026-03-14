@@ -7,42 +7,35 @@ BUILD_DIR = builds
 PDX_FILE = $(BUILD_DIR)/stillwater-approach.pdx
 PDXINFO = $(SOURCE_DIR)/pdxinfo
 
-# Default target
-help:
-	@echo "Stillwater Approach — Makefile targets:"
-	@echo ""
-	@echo "  make build          Build the .pdx file"
-	@echo "  make test           Run test suite (busted)"
-	@echo "  make lint           Run static analysis (luacheck)"
-	@echo "  make format         Format code with stylua"
-	@echo "  make format-check   Check formatting without changes"
-	@echo "  make sim            Build and run simulator with logs"
-	@echo "  make release        Bump version and tag release (requires VERSION=x.y.z)"
-	@echo "  make install        Install dev dependencies (macOS/Linux)"
-	@echo "  make install-hooks  Install git hooks (run once after cloning)"
-	@echo "  make clean          Remove build artifacts"
-	@echo "  make help           Show this message"
+help: ## Show this message
+	@grep -E '^[a-zA-Z_-]+:.*##' Makefile | awk 'BEGIN{FS=":.*## "} {printf "  make %-16s %s\n", $$1, $$2}'
 
-build:
+build: ## Build the .pdx file
 	mkdir -p $(BUILD_DIR)
 	$(PDC) $(SOURCE_DIR) $(PDX_FILE)
 
-test:
+test: ## Run test suite (busted)
 	busted
 
-lint:
+lint: ## Run static analysis (luacheck)
 	luacheck $(SOURCE_DIR) spec/
 
-format:
+format: ## Format code with stylua
 	stylua $(SOURCE_DIR) spec/
 
-format-check:
+format-check: ## Check formatting without changes
 	stylua --check $(SOURCE_DIR) spec/
 
-sim: build
+sim: build ## Build and run simulator with logs
 	"$(SIMULATOR)" $(PDX_FILE)
 
-release:
+install: install-hooks ## Install dev dependencies (macOS/Linux)
+	_scripts/install.sh
+
+install-hooks: ## Install git hooks (run once after cloning)
+	ln -sf ../../_scripts/pre-commit.sh .git/hooks/pre-commit
+
+release: ## Bump version and tag release (requires VERSION=x.y.z)
 	@if [ -z "$(VERSION)" ]; then \
 		echo "Error: VERSION not specified. Usage: make release VERSION=x.y.z"; \
 		exit 1; \
@@ -59,38 +52,5 @@ release:
 	echo "✓ v$(VERSION) tagged. To push:"; \
 	echo "  git push origin HEAD && git push origin v$(VERSION)"
 
-install: install-hooks
-	@OS=$$(uname -s); \
-	if [ "$$OS" = "Darwin" ]; then \
-		echo "Installing via Homebrew..."; \
-		brew install lua@5.4 luarocks stylua jq; \
-		luarocks install luacheck; \
-		luarocks install busted; \
-	elif [ "$$OS" = "Linux" ]; then \
-		echo "Installing via apt + luarocks..."; \
-		apt-get install -y lua5.4 luarocks curl jq unzip; \
-		luarocks install luacheck; \
-		luarocks install busted; \
-		if ! command -v stylua >/dev/null 2>&1; then \
-			curl -sL "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.4.0/stylua-linux-x86_64.zip" \
-				-o /tmp/stylua.zip; \
-			if [ "$$(id -u)" = "0" ]; then \
-				STYLUA_BIN=/usr/local/bin; \
-			else \
-				STYLUA_BIN=$${HOME}/.local/bin; \
-				mkdir -p "$$STYLUA_BIN"; \
-			fi; \
-			unzip -o /tmp/stylua.zip -d "$$STYLUA_BIN" stylua; \
-			chmod +x "$$STYLUA_BIN/stylua"; \
-			rm /tmp/stylua.zip; \
-			echo "stylua installed to $$STYLUA_BIN — ensure it is in your PATH"; \
-		fi; \
-	else \
-		echo "Unsupported OS: $$OS"; exit 1; \
-	fi
-
-install-hooks:
-	ln -sf ../../_scripts/pre-commit.sh .git/hooks/pre-commit
-
-clean:
+clean: ## Remove build artifacts
 	rm -rf $(BUILD_DIR)
