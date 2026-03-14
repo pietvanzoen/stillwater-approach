@@ -224,24 +224,25 @@ source/
 
 ## Contributing
 
-### Prerequisites
+### Setup
 
-- [Playdate SDK](https://play.date/dev/) installed
-- [Lua](https://www.lua.org/) and [LuaRocks](https://luarocks.org/) (e.g. `brew install lua luarocks`)
-- [luacheck](https://github.com/mpeterv/luacheck) (`luarocks install luacheck`)
-- [StyLua](https://github.com/JohnnyMorganz/StyLua) (`brew install stylua`)
-- [busted](https://github.com/lunarmodules/busted) (`luarocks install busted`)
-- [jq](https://jqlang.github.io/jq/) (`brew install jq`) — used by the Claude Code usage hook
+```bash
+make install  # install dev dependencies and git hooks (macOS/Linux)
+```
+
+`make install` handles Lua, LuaRocks, luacheck, busted, StyLua, and jq. The [Playdate SDK](https://play.date/dev/) must be installed separately for `make build` and `make sim`.
 
 ### Commands
 
-- Test: `make test`
-- Lint: `make lint`
-- Format: `make format`
-- Format check: `make format-check`
-- Build: `make build`
-- Run simulator: `make sim`
-- See all targets: `make help`
+```
+make help          # see all targets
+make test          # run test suite (busted)
+make lint          # run static analysis (luacheck)
+make format        # format code with stylua
+make format-check  # check formatting without changes
+make build         # build the .pdx file
+make sim           # build and run in simulator
+```
 
 ### Lua conventions
 
@@ -259,4 +260,4 @@ source/
 
 ### CI
 
-Pull requests are checked with luacheck, StyLua, and busted. Run `make test`, `make lint`, and `make format-check` locally before pushing.
+Pull requests are checked with luacheck, StyLua, busted, and `pdc` (Playdate SDK build). Run `make test`, `make lint`, and `make format-check` locally before pushing.

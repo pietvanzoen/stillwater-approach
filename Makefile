@@ -1,4 +1,4 @@
-.PHONY: build test lint format format-check sim help clean release
+.PHONY: build test lint format format-check sim help clean release install install-hooks
 
 PDC = pdc
 SIMULATOR = $(PLAYDATE_SDK_PATH)/bin/Playdate Simulator.app/Contents/MacOS/Playdate Simulator
@@ -7,40 +7,35 @@ BUILD_DIR = builds
 PDX_FILE = $(BUILD_DIR)/stillwater-approach.pdx
 PDXINFO = $(SOURCE_DIR)/pdxinfo
 
-# Default target
-help:
-	@echo "Stillwater Approach — Makefile targets:"
-	@echo ""
-	@echo "  make build          Build the .pdx file"
-	@echo "  make test           Run test suite (busted)"
-	@echo "  make lint           Run static analysis (luacheck)"
-	@echo "  make format         Format code with stylua"
-	@echo "  make format-check   Check formatting without changes"
-	@echo "  make sim            Build and run simulator with logs"
-	@echo "  make release        Bump version and tag release (requires VERSION=x.y.z)"
-	@echo "  make clean          Remove build artifacts"
-	@echo "  make help           Show this message"
+help: ## Show this message
+	@grep -E '^[a-zA-Z_-]+:.*##' Makefile | awk 'BEGIN{FS=":.*## "} {printf "  make %-16s %s\n", $$1, $$2}'
 
-build:
+build: ## Build the .pdx file
 	mkdir -p $(BUILD_DIR)
 	$(PDC) $(SOURCE_DIR) $(PDX_FILE)
 
-test:
+test: ## Run test suite (busted)
 	busted
 
-lint:
+lint: ## Run static analysis (luacheck)
 	luacheck $(SOURCE_DIR) spec/
 
-format:
+format: ## Format code with stylua
 	stylua $(SOURCE_DIR) spec/
 
-format-check:
+format-check: ## Check formatting without changes
 	stylua --check $(SOURCE_DIR) spec/
 
-sim: build
+sim: build ## Build and run simulator with logs
 	"$(SIMULATOR)" $(PDX_FILE)
 
-release:
+install: install-hooks ## Install dev dependencies (macOS/Linux)
+	_scripts/install.sh
+
+install-hooks: ## Install git hooks (run once after cloning)
+	ln -sf ../../_scripts/pre-commit.sh .git/hooks/pre-commit
+
+release: ## Bump version and tag release (requires VERSION=x.y.z)
 	@if [ -z "$(VERSION)" ]; then \
 		echo "Error: VERSION not specified. Usage: make release VERSION=x.y.z"; \
 		exit 1; \
@@ -57,5 +52,5 @@ release:
 	echo "✓ v$(VERSION) tagged. To push:"; \
 	echo "  git push origin HEAD && git push origin v$(VERSION)"
 
-clean:
+clean: ## Remove build artifacts
 	rm -rf $(BUILD_DIR)
