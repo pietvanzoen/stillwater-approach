@@ -187,6 +187,16 @@ Failure state: any aircraft hits 0 fuel, or an emergency aircraft exceeds its ti
 - No jump scares, no explicit horror — just a creeping sense that something is off
 - The logbook persists across sessions — player can see every aircraft they've ever cleared
 
+## ATC realism vs. playability
+
+The game aims for a **felt authenticity** — it should feel like a real small airport without requiring the player to understand actual ATC procedures. Real-world protocols inform the mechanics, but are always adapted for fun and clarity.
+
+In practice this means:
+- **Altitudes, callsigns, and procedures** are grounded in real FAA conventions (see [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md)) but simplified where needed
+- **Terminology** on cards and UI should be recognisable to aviation enthusiasts without being opaque to everyone else
+- **Pressure and pacing** reflect real ATC concerns (fuel, sequencing, emergencies) but at a game-friendly timescale
+- When realism and fun conflict, **fun wins** — but the real-world research should inform what we simplify, not be ignored
+
 ---
 
 ## Project structure

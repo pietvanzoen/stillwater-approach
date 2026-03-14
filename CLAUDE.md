@@ -81,6 +81,17 @@ A `docs/` folder holds research and reference material that informed game design
 
 Keep filenames specific (e.g. `atc-altitude-reference.md`, not `notes.md`). Existing docs: [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md).
 
+## ATC realism and playability
+
+The game aims for **felt authenticity** — real ATC conventions should inform mechanics, but always adapted for fun and accessibility. Players shouldn't need to understand actual ATC to enjoy the game.
+
+When implementing mechanics that touch real-world aviation (altitudes, holding patterns, approach procedures, emergencies, callsigns):
+1. **Research the real convention first** — use the GitHub REST API, WebFetch, or WebSearch to find FAA/ICAO sources. Save meaningful findings to `docs/` (see Reference docs section).
+2. **Then adapt for gameplay** — simplify timescales, abstract away complexity that doesn't add fun, but let the real-world logic shape the design.
+3. **When realism and fun conflict, fun wins** — but document the trade-off so the reasoning is preserved.
+
+See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for an example of this approach applied to holding altitudes and approach procedures. See the README "ATC realism vs. playability" section for the player-facing statement of this principle.
+
 ## Game design decisions
 
 - **Altitude is AGL** (Above Ground Level, feet above the runway). 0 = touchdown. Never use MSL in game code or UI. See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for the ATC research behind this.
