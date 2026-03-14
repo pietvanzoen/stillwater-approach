@@ -91,21 +91,33 @@ local function update_shift()
   Queue.check_arrivals(shift_state, shift_state.elapsed)
   Queue.tick_all(shift_state, dt)
 
-  -- Landing resolution: front aircraft descends to altitude 0 → touches down and clears runway.
+  -- Landing resolution: front aircraft descends to altitude 0 → touches down.
+  -- Display "Landed" for TOUCHDOWN_DWELL seconds before clearing the runway.
   if #shift_state.landing > 0 and shift_state.landing[1].altitude <= 0 then
-    Queue.land_front(shift_state)
-    -- Keep cursor valid after the aircraft is removed.
-    if cursor.section == Constants.SECTION_LANDING then
-      if #shift_state.landing == 0 and #shift_state.holding > 0 then
-        -- Landing list emptied; shift focus to holding.
-        cursor.section = Constants.SECTION_HOLDING
-        cursor.index = 1
-      elseif #shift_state.landing == 0 then
-        -- Both lists empty (all aircraft landed); park cursor safely.
-        cursor.index = 1
-      else
-        -- Landing list still has aircraft; clamp index to new length.
-        cursor.index = math.min(cursor.index, #shift_state.landing)
+    local front = shift_state.landing[1]
+    if front.touchdown_timer == nil then
+      -- Start dwell: aircraft has just touched down
+      front.touchdown_timer = Constants.TOUCHDOWN_DWELL
+    else
+      -- Count down dwell timer
+      front.touchdown_timer = front.touchdown_timer - dt
+      if front.touchdown_timer <= 0 then
+        -- Dwell complete: remove aircraft from landing queue
+        Queue.land_front(shift_state)
+        -- Keep cursor valid after the aircraft is removed.
+        if cursor.section == Constants.SECTION_LANDING then
+          if #shift_state.landing == 0 and #shift_state.holding > 0 then
+            -- Landing list emptied; shift focus to holding.
+            cursor.section = Constants.SECTION_HOLDING
+            cursor.index = 1
+          elseif #shift_state.landing == 0 then
+            -- Both lists empty (all aircraft landed); park cursor safely.
+            cursor.index = 1
+          else
+            -- Landing list still has aircraft; clamp index to new length.
+            cursor.index = math.min(cursor.index, #shift_state.landing)
+          end
+        end
       end
     end
   end

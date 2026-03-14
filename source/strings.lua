@@ -11,8 +11,9 @@ Strings = {
     altitude_prefix = "ALT: ",
     -- Shown on cards in the landing queue while altitude is descending toward 0.
     -- The down-arrow signals to players unfamiliar with ATC that this value is counting down.
-    altitude_approach_prefix = "ALT\226\150\188 ",
+    altitude_approach_prefix = "ALTv ",
     fuel_prefix = "F: ",
+    landed = "Landed",
   },
   shift = {
     placeholder = "SHIFT",

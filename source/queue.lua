@@ -57,11 +57,18 @@ end
 -- Advances time by dt seconds for every aircraft in both lists.
 -- Aircraft in the landing queue also lose altitude at Constants.APPROACH_RATE ft/sec,
 -- simulating the approach descent. Holding aircraft maintain their assigned altitude.
+-- Landing aircraft only descend if there is at least MIN_LANDING_SEP feet of separation
+-- from the aircraft ahead, preventing visual confusion from multiple aircraft descending
+-- at nearly the same altitude.
 function Queue.tick_all(state, dt)
-  for _, aircraft in ipairs(state.landing) do
+  for i, aircraft in ipairs(state.landing) do
     Aircraft.tick(aircraft, dt)
-    -- Descend on approach; clamp at 0 so altitude never goes negative.
-    aircraft.altitude = math.max(0, aircraft.altitude - Constants.APPROACH_RATE * dt)
+    local prev = state.landing[i - 1]
+    -- Only descend if there is enough gap from the aircraft ahead,
+    -- or if this is the first in the queue.
+    if prev == nil or aircraft.altitude - prev.altitude >= Constants.MIN_LANDING_SEP then
+      aircraft.altitude = math.max(0, aircraft.altitude - Constants.APPROACH_RATE * dt)
+    end
   end
   for _, aircraft in ipairs(state.holding) do
     Aircraft.tick(aircraft, dt)

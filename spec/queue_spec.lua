@@ -250,5 +250,61 @@ describe("Queue", function()
       Queue.tick_all(q, 10)
       assert.equal(3500, a.altitude)
     end)
+
+    it("aircraft at position 1 always descends", function()
+      local q = Queue.new()
+      local a = make_aircraft("A", 90)
+      a.altitude = 2500
+      q.landing = { a }
+      Queue.tick_all(q, 1)
+      -- Position 1 has no aircraft ahead, so it descends normally
+      assert.equal(2450, a.altitude)
+    end)
+
+    it("aircraft at position 2 does not descend when gap is less than MIN_LANDING_SEP", function()
+      local q = Queue.new()
+      local a1 = make_aircraft("A", 90)
+      a1.altitude = 2500
+      local a2 = make_aircraft("B", 80)
+      a2.altitude = 2550 -- gap = 50, less than MIN_LANDING_SEP (500)
+      q.landing = { a1, a2 }
+      Queue.tick_all(q, 1)
+      -- a1 descends: 2500 - 50 = 2450
+      assert.equal(2450, a1.altitude)
+      -- a2 is held: gap would have been 50, stays 2550
+      assert.equal(2550, a2.altitude)
+    end)
+
+    it("aircraft at position 2 descends once gap to position 1 reaches MIN_LANDING_SEP", function()
+      local q = Queue.new()
+      local a1 = make_aircraft("A", 90)
+      a1.altitude = 2000
+      local a2 = make_aircraft("B", 80)
+      a2.altitude = 2500 -- gap = 500, exactly MIN_LANDING_SEP
+      q.landing = { a1, a2 }
+      Queue.tick_all(q, 1)
+      -- a1 descends: 2000 - 50 = 1950
+      assert.equal(1950, a1.altitude)
+      -- a2 gap is exactly 500, so it can descend: 2500 - 50 = 2450
+      assert.equal(2450, a2.altitude)
+    end)
+
+    it("enforces separation between all aircraft in landing queue", function()
+      local q = Queue.new()
+      local a1 = make_aircraft("A", 90)
+      a1.altitude = 1500
+      local a2 = make_aircraft("B", 80)
+      a2.altitude = 2100 -- gap = 600, > MIN_LANDING_SEP
+      local a3 = make_aircraft("C", 70)
+      a3.altitude = 2400 -- gap from a2 = 300, < MIN_LANDING_SEP
+      q.landing = { a1, a2, a3 }
+      Queue.tick_all(q, 1)
+      -- a1 descends: 1500 - 50 = 1450
+      assert.equal(1450, a1.altitude)
+      -- a2 descends (gap from a1 is 650 > 500): 2100 - 50 = 2050
+      assert.equal(2050, a2.altitude)
+      -- a3 held (gap from a2 is 300 < 500): stays at 2400
+      assert.equal(2400, a3.altitude)
+    end)
   end)
 end)

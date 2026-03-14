@@ -51,12 +51,15 @@ function UI.draw_aircraft_card(aircraft, x, y, focused, on_approach)
   gfx.setFont(card_font)
   gfx.drawTextAligned(aircraft.callsign, x + c.COL1_CX, text_y, kTextAlignment.center)
 
-  -- Altitude label: "ALT▼ " on approach (descending), "ALT: " in holding (static).
+  -- Altitude label: "ALTv " on approach (descending), "ALT: " in holding (static).
+  -- On approach: round to tens so display changes every ~0.2s instead of every frame.
   local alt_prefix = on_approach and Strings.card.altitude_approach_prefix or Strings.card.altitude_prefix
-  gfx.drawText(alt_prefix .. tostring(math.ceil(aircraft.altitude)), x + c.COL2_X, text_y)
+  local alt_value = on_approach and (math.ceil(aircraft.altitude / 10) * 10) or math.ceil(aircraft.altitude)
+  gfx.drawText(alt_prefix .. tostring(alt_value), x + c.COL2_X, text_y)
 
   gfx.drawText(Strings.card.fuel_prefix .. format_fuel(aircraft.fuel), x + c.COL3_X, text_y)
-  gfx.drawTextAligned(aircraft.situation, x + c.COL4_CX, text_y, kTextAlignment.center)
+  local situation_text = aircraft.touchdown_timer ~= nil and Strings.card.landed or aircraft.situation
+  gfx.drawTextAligned(situation_text, x + c.COL4_CX, text_y, kTextAlignment.center)
   gfx.setFont(gfx.getSystemFont())
 end
 
