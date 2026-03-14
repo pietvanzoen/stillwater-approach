@@ -96,7 +96,15 @@ See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for an ex
 
 - **Altitude is AGL** (Above Ground Level, feet above the runway). 0 = touchdown. Never use MSL in game code or UI. See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for the ATC research behind this.
 - **Holding aircraft**: altitude is static. **Landing queue aircraft**: altitude descends at `Constants.APPROACH_RATE` ft/sec. `Queue.land_front` is called when `landing[1].altitude <= 0`.
+- **Display rounding**: Round display values (e.g., altitude to tens) independently from internal state for visual clarity without affecting game logic.
+- **Landing queue separation**: Enforce MIN_LANDING_SEP per-tick in `Queue.tick_all` by checking previous aircraft altitude; prevents confusion from multiple aircraft descending at nearly the same altitude.
+- **Dwell state**: Use aircraft property (e.g., `touchdown_timer`) for transient UI states (e.g., showing "Landed"); keeps state colocated with data.
+
+## Playdate font limitations
+
+- **Roobert-9-Mono-Condensed** (bitmap font) supports ASCII only; UTF-8 glyphs (▼, ⚠️, etc.) render as unknown diamonds. Use ASCII alternatives (v, !, etc.) for UI symbols. Update both code and comments to reflect the actual symbol being used.
 
 ## Testing notes
 
 - `Constants`, `Strings`, etc. are Playdate-style globals loaded via `import` — they are **not** available in the busted test environment automatically. Spec files that test modules depending on these globals must `require("source.constants")` (etc.) explicitly at the top, or tests will error with "attempt to index global 'Constants' (a nil value)".
+- Lua 5.5 compatibility: `make install` may fail with luacheck/busted if Lua 5.5 is installed; tests can still run via workaround but re-running `make install` sometimes needed.
