@@ -11,9 +11,8 @@ if [ "$OS" = "Darwin" ]; then
 
 elif [ "$OS" = "Linux" ]; then
   echo "Installing via apt + luarocks..."
-  SUDO=$(command -v sudo 2>/dev/null || true)
-  $SUDO apt-get update -qq
-  $SUDO apt-get install -y lua5.4 luarocks curl jq unzip
+  apt-get update -qq
+  apt-get install -y lua5.4 luarocks curl jq unzip
   luarocks install luacheck
   luarocks install busted
 
