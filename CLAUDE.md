@@ -8,7 +8,7 @@ I am new to Lua and new to game development. Write clean, well-commented code an
 
 ## Current milestone
 
-Begin with **milestone 2**: a single aircraft card appears on the shift screen with callsign, fuel, and situation. Fuel ticks down visibly each second. No queue management yet — just one card on screen with a live countdown.
+**Milestone 5: Landing resolution** — aircraft at the front of the queue lands after a timer, shift progresses. See `README.md` for the full milestone list.
 
 ## Pull request instructions
 
@@ -23,19 +23,18 @@ When creating a PR for a completed milestone:
 
 ## Usage tracking
 
-Session usage is logged to `.claude/usage-log.jsonl.local` (gitignored) via a Stop hook. The pre-commit hook automatically copies it over `.claude/usage-log.jsonl` before staging, so it's included in commits without extra steps.
+Session usage is logged to `.claude/usage-log.jsonl.local` (gitignored) via a Stop hook. The pre-commit hook (`_scripts/pre-commit.sh`) merges it into the tracked `.claude/usage-log.jsonl` before each commit automatically.
 
-No manual workflow needed — just commit normally.
+`make install` installs the hook. No other manual steps needed — just commit normally.
 
-## Running the simulator
-
-To build and launch the simulator:
+## Dev setup
 
 ```
-make sim
+make install  # install dependencies and git hooks
+make help     # see all available targets
 ```
 
-See all available make targets with `make help`.
+Run the simulator with `make sim`. Requires the Playdate SDK installed locally.
 
 ## Release workflow
 
@@ -52,7 +51,7 @@ This updates `source/pdxinfo`, commits with message `Release vX.Y.Z`, and tags t
 ## Technical notes
 
 - Target: **Playdate hardware** (also test in simulator)
-- SDK: Playdate SDK (Lua API), already installed
+- SDK: Playdate SDK (Lua API) — install from play.date/dev/ for local builds
 - Use `playdate.graphics` aliased as `gfx` for drawing
 - Use `playdate.update()` as the main game loop (60fps)
 - Use `playdate.datastore` for persistent logbook storage
