@@ -86,7 +86,7 @@ Keep filenames specific (e.g. `atc-altitude-reference.md`, not `notes.md`). Exis
 The game aims for **felt authenticity** — real ATC conventions should inform mechanics, but always adapted for fun and accessibility. Players shouldn't need to understand actual ATC to enjoy the game.
 
 When implementing mechanics that touch real-world aviation (altitudes, holding patterns, approach procedures, emergencies, callsigns):
-1. **Research the real convention first** — use the GitHub REST API, WebFetch, or WebSearch to find FAA/ICAO sources. Save meaningful findings to `docs/` (see Reference docs section).
+1. **Research the real convention first** — use WebSearch and WebFetch to find FAA/ICAO sources. Save meaningful findings to `docs/` (see Reference docs section).
 2. **Then adapt for gameplay** — simplify timescales, abstract away complexity that doesn't add fun, but let the real-world logic shape the design.
 3. **When realism and fun conflict, fun wins** — but document the trade-off so the reasoning is preserved.
 
