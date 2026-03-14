@@ -26,7 +26,7 @@ Aircraft call in one by one requesting landing clearance. Each aircraft is repre
 
 - **Callsign** (see carrier list below)
 - **Fuel remaining** (a countdown — creates time pressure)
-- **Altitude** *(planned)* — how close the aircraft is to landing; drives approach sequencing
+- **Altitude** — feet above the runway (AGL). Static while holding; descends at 50 ft/sec once in the landing queue. Reaches 0 at touchdown. See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for the real-world ATC conventions this is based on.
 - **Situation** (Normal / Low Fuel / Emergency / Priority / Unknown)
 - **Aircraft type** (see aircraft list below)
 - **Notes** (flavor text, sometimes a clue something is wrong)
@@ -187,6 +187,16 @@ Failure state: any aircraft hits 0 fuel, or an emergency aircraft exceeds its ti
 - No jump scares, no explicit horror — just a creeping sense that something is off
 - The logbook persists across sessions — player can see every aircraft they've ever cleared
 
+## ATC realism vs. playability
+
+The game aims for a **felt authenticity** — it should feel like a real small airport without requiring the player to understand actual ATC procedures. Real-world protocols inform the mechanics, but are always adapted for fun and clarity.
+
+In practice this means:
+- **Altitudes, callsigns, and procedures** are grounded in real FAA conventions (see [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md)) but simplified where needed
+- **Terminology** on cards and UI should be recognisable to aviation enthusiasts without being opaque to everyone else
+- **Pressure and pacing** reflect real ATC concerns (fuel, sequencing, emergencies) but at a game-friendly timescale
+- When realism and fun conflict, **fun wins** — but the real-world research should inform what we simplify, not be ignored
+
 ---
 
 ## Project structure
@@ -201,6 +211,10 @@ source/
   seasons.lua           -- season definitions, traffic generation, conditions
   flavor.lua            -- callsigns, radio text, weird escalation events
   logbook.lua           -- persistent logbook across sessions
+docs/
+  atc-altitude-reference.md  -- ATC altitude research: holding stack conventions,
+                             --   mountainous terrain clearance rules, approach
+                             --   sequence, and how they inform game design
 ```
 
 ---
@@ -211,7 +225,7 @@ source/
 - [x] **One aircraft card** — a single aircraft appears with callsign, fuel, situation. Fuel ticks down visibly.
 - [x] **Queue & holding** — player can move aircraft between landing queue and holding stack
 - [x] **Multiple aircraft** — new aircraft arrive over time, player juggles several at once
-- [ ] **Landing resolution** — aircraft at front of queue lands after a timer, shift progresses
+- [x] **Landing resolution** — aircraft at front of queue lands after a timer, shift progresses
 - [ ] **Win/lose + score screen** — shift ends, score calculated
 - [ ] **Season: Spring** — full Spring shift with traffic generation and conditions
 - [ ] **Emergency cards** — medevac and SAR with time-based pressure

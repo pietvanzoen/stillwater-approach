@@ -90,6 +90,38 @@ local function update_shift()
   shift_state.elapsed = shift_state.elapsed + dt
   Queue.check_arrivals(shift_state, shift_state.elapsed)
   Queue.tick_all(shift_state, dt)
+
+  -- Landing resolution: front aircraft descends to altitude 0 → touches down.
+  -- Display "Landed" for TOUCHDOWN_DWELL seconds before clearing the runway.
+  if #shift_state.landing > 0 and shift_state.landing[1].altitude <= 0 then
+    local front = shift_state.landing[1]
+    if front.touchdown_timer == nil then
+      -- Start dwell: aircraft has just touched down
+      front.touchdown_timer = Constants.TOUCHDOWN_DWELL
+    else
+      -- Count down dwell timer
+      front.touchdown_timer = front.touchdown_timer - dt
+      if front.touchdown_timer <= 0 then
+        -- Dwell complete: remove aircraft from landing queue
+        Queue.land_front(shift_state)
+        -- Keep cursor valid after the aircraft is removed.
+        if cursor.section == Constants.SECTION_LANDING then
+          if #shift_state.landing == 0 and #shift_state.holding > 0 then
+            -- Landing list emptied; shift focus to holding.
+            cursor.section = Constants.SECTION_HOLDING
+            cursor.index = 1
+          elseif #shift_state.landing == 0 then
+            -- Both lists empty (all aircraft landed); park cursor safely.
+            cursor.index = 1
+          else
+            -- Landing list still has aircraft; clamp index to new length.
+            cursor.index = math.min(cursor.index, #shift_state.landing)
+          end
+        end
+      end
+    end
+  end
+
   handle_shift_input()
   UI.draw_shift_screen(shift_state, cursor)
 end
@@ -101,13 +133,16 @@ function playdate.update()
       -- Initialise shift with timed arrivals; landing and holding start empty
       shift_state = Queue.new(Constants.MAX_LANDING)
       shift_state.elapsed = 0
+      -- Altitudes are AGL (feet above the runway). Holding aircraft maintain these altitudes
+      -- until promoted to the landing queue, at which point they descend to 0 (touchdown).
+      -- Values reflect realistic KSTW holding stack: 2500/3500/4500 ft AGL in 1000 ft increments.
       shift_state.schedule = {
-        { time = 0, aircraft = Aircraft.new("STW4", 90, 3000, "Normal") },
-        { time = 15, aircraft = Aircraft.new("SVC12", 120, 8000, "Cargo Shift") },
-        { time = 40, aircraft = Aircraft.new("TNK81", 75, 5000, "Low Fuel") },
-        { time = 70, aircraft = Aircraft.new("QUL3", 140, 6000, "Normal") },
-        { time = 100, aircraft = Aircraft.new("CAM1", 60, 4000, "Medical") },
-        { time = 130, aircraft = Aircraft.new("PTA7", 110, 7000, "Normal") },
+        { time = 0, aircraft = Aircraft.new("STW4", 90, 2500, "Normal") },
+        { time = 15, aircraft = Aircraft.new("SVC12", 120, 3500, "Cargo Shift") },
+        { time = 40, aircraft = Aircraft.new("TNK81", 75, 2500, "Low Fuel") },
+        { time = 70, aircraft = Aircraft.new("QUL3", 140, 4500, "Normal") },
+        { time = 100, aircraft = Aircraft.new("CAM1", 60, 3000, "Medical") },
+        { time = 130, aircraft = Aircraft.new("PTA7", 110, 4000, "Normal") },
       }
       shift_state.next_arrival = 1
       cursor = { section = Constants.SECTION_HOLDING, index = 1 }

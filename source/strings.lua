@@ -9,7 +9,11 @@ Strings = {
   },
   card = {
     altitude_prefix = "ALT: ",
+    -- Shown on cards in the landing queue while altitude is descending toward 0.
+    -- ASCII 'v' signals descent (UTF-8 down-arrow ▼ not supported by Roobert-9-Mono-Condensed bitmap font).
+    altitude_approach_prefix = "ALTv ",
     fuel_prefix = "F: ",
+    landed = "Landed",
   },
   shift = {
     placeholder = "SHIFT",
