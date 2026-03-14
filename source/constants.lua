@@ -45,4 +45,9 @@ Constants = {
   -- Section name identifiers used in cursor state
   SECTION_LANDING = "landing",
   SECTION_HOLDING = "holding",
+
+  -- Landing approach: altitude lost per second once an aircraft enters the landing queue.
+  -- Holding aircraft maintain their assigned altitude; only aircraft in the landing queue descend.
+  -- At 50 ft/sec: 2500 ft → 50 s, 3500 ft → 70 s, 4500 ft → 90 s.
+  APPROACH_RATE = 50,
 }

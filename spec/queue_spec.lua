@@ -1,3 +1,4 @@
+require("source.constants")
 require("source.aircraft")
 require("source.queue")
 
@@ -150,6 +151,57 @@ describe("Queue", function()
     end)
   end)
 
+  describe("Queue.land_front", function()
+    it("returns nil when landing is empty", function()
+      local q = Queue.new()
+      assert.is_nil(Queue.land_front(q))
+    end)
+
+    it("returns the first aircraft", function()
+      local q = Queue.new()
+      local a = make_aircraft("STW4", 90)
+      q.landing = { a }
+      assert.equal(a, Queue.land_front(q))
+    end)
+
+    it("removes the first aircraft from landing", function()
+      local q = Queue.new()
+      q.landing = { make_aircraft("STW4", 90) }
+      Queue.land_front(q)
+      assert.equal(0, #q.landing)
+    end)
+
+    it("appends the aircraft to state.landed", function()
+      local q = Queue.new()
+      local a = make_aircraft("STW4", 90)
+      q.landing = { a }
+      Queue.land_front(q)
+      assert.equal(1, #q.landed)
+      assert.equal(a, q.landed[1])
+    end)
+
+    it("preserves order of remaining landing aircraft", function()
+      local q = Queue.new()
+      local a1 = make_aircraft("STW4", 90)
+      local a2 = make_aircraft("SVC12", 120)
+      local a3 = make_aircraft("TNK81", 75)
+      q.landing = { a1, a2, a3 }
+      Queue.land_front(q)
+      assert.equal(a2, q.landing[1])
+      assert.equal(a3, q.landing[2])
+    end)
+
+    it("does not touch the holding list", function()
+      local q = Queue.new()
+      local hold = make_aircraft("QUL3", 140)
+      q.landing = { make_aircraft("STW4", 90) }
+      q.holding = { hold }
+      Queue.land_front(q)
+      assert.equal(1, #q.holding)
+      assert.equal(hold, q.holding[1])
+    end)
+  end)
+
   describe("Queue.tick_all", function()
     it("ticks all aircraft in landing by dt", function()
       local q = Queue.new()
@@ -169,6 +221,34 @@ describe("Queue", function()
       Queue.tick_all(q, 10)
       assert.equal(80, a1.fuel)
       assert.equal(50, a2.fuel)
+    end)
+
+    it("decreases altitude for landing aircraft by APPROACH_RATE * dt", function()
+      local q = Queue.new()
+      local a = make_aircraft("A", 90)
+      a.altitude = 2500
+      q.landing = { a }
+      Queue.tick_all(q, 1)
+      -- APPROACH_RATE = 50, dt = 1 → 2500 - 50 = 2450
+      assert.equal(2450, a.altitude)
+    end)
+
+    it("clamps landing altitude at 0, never negative", function()
+      local q = Queue.new()
+      local a = make_aircraft("A", 90)
+      a.altitude = 10
+      q.landing = { a }
+      Queue.tick_all(q, 10) -- would be 10 - 500 = -490 without clamp
+      assert.equal(0, a.altitude)
+    end)
+
+    it("does not change altitude for holding aircraft", function()
+      local q = Queue.new()
+      local a = make_aircraft("A", 90)
+      a.altitude = 3500
+      q.holding = { a }
+      Queue.tick_all(q, 10)
+      assert.equal(3500, a.altitude)
     end)
   end)
 end)

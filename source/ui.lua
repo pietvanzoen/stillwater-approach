@@ -21,10 +21,15 @@ end
 --   ┌──┬────────┬───────────┬──────────┬──────────────────┐
 --   │▓▓│  STW4  │ ALT: 3000 │  F: 1:30 │  Normal          │
 --   └──┴────────┴───────────┴──────────┴──────────────────┘
+--   ┌──┬────────┬───────────┬──────────┬──────────────────┐
+--   │▓▓│  STW4  │ ALT▼ 2450 │  F: 1:15 │  Normal          │  ← on approach
+--   └──┴────────┴───────────┴──────────┴──────────────────┘
 --
 -- Labels are inline with values; no separate header row.
 -- If focused is true, the card border is drawn thicker to indicate selection.
-function UI.draw_aircraft_card(aircraft, x, y, focused)
+-- If on_approach is true, the altitude label shows a down-arrow (▼) to signal
+-- the value is counting toward 0 (touchdown). Holding cards use the plain "ALT: " label.
+function UI.draw_aircraft_card(aircraft, x, y, focused, on_approach)
   local c = Constants.CARD
 
   if focused then
@@ -45,7 +50,11 @@ function UI.draw_aircraft_card(aircraft, x, y, focused)
   local text_y = y + c.TEXT_Y_OFFSET
   gfx.setFont(card_font)
   gfx.drawTextAligned(aircraft.callsign, x + c.COL1_CX, text_y, kTextAlignment.center)
-  gfx.drawText(Strings.card.altitude_prefix .. tostring(aircraft.altitude), x + c.COL2_X, text_y)
+
+  -- Altitude label: "ALT▼ " on approach (descending), "ALT: " in holding (static).
+  local alt_prefix = on_approach and Strings.card.altitude_approach_prefix or Strings.card.altitude_prefix
+  gfx.drawText(alt_prefix .. tostring(math.ceil(aircraft.altitude)), x + c.COL2_X, text_y)
+
   gfx.drawText(Strings.card.fuel_prefix .. format_fuel(aircraft.fuel), x + c.COL3_X, text_y)
   gfx.drawTextAligned(aircraft.situation, x + c.COL4_CX, text_y, kTextAlignment.center)
   gfx.setFont(gfx.getSystemFont())
@@ -87,7 +96,7 @@ function UI.draw_shift_screen(shift_state, cursor)
   else
     for i, aircraft in ipairs(shift_state.landing) do
       local focused = cursor.section == c.SECTION_LANDING and cursor.index == i
-      UI.draw_aircraft_card(aircraft, c.CARD.X, current_y, focused)
+      UI.draw_aircraft_card(aircraft, c.CARD.X, current_y, focused, true)
       current_y = current_y + card_step
     end
   end
