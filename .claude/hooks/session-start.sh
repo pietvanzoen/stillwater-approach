@@ -6,6 +6,8 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
+echo '{"async": true, "asyncTimeout": 300000}'
+
 echo "Installing Stillwater Approach dev dependencies..."
 
 # Lua + LuaRocks (for luacheck and busted)
