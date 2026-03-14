@@ -12,9 +12,11 @@ I am new to Lua and new to game development. Write clean, well-commented code an
 
 ## Pull request instructions
 
-When creating a PR for a completed milestone:
-1. Check off the corresponding milestone checkbox in `README.md` (change `- [ ]` to `- [x]`)
-2. Include the milestone name in the PR title (e.g. "Milestone 2: one aircraft card")
+When completing a milestone, before creating a PR:
+
+1. **Update `README.md`** — check off the milestone checkbox (`- [ ]` → `- [x]`), and update any game mechanic descriptions affected by the work (e.g. altitude behaviour, controls, scoring). Keep README the source of truth for how the game actually works.
+2. **Update `CLAUDE.md`** — advance the current milestone, and capture any new design decisions, conventions, or testing gotchas discovered during the session that future sessions should know about.
+3. **Create the PR** — include the milestone name in the PR title (e.g. "Milestone 2: one aircraft card").
 
 ## Playdate references
 
