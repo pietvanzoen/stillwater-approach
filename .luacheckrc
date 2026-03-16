@@ -13,6 +13,7 @@ globals = {
   "Queue",
   "UI",
   "Cover",
+  "Scoring",
   "log",
 }
 

@@ -77,6 +77,65 @@ local function draw_section_header(text, y)
   gfx.setFont(gfx.getSystemFont())
 end
 
+-- Draws the end-of-shift score screen.
+-- result is the table returned by Scoring.calculate, plus:
+--   win             (boolean) true = shift complete, false = shift failed
+--   failed_callsign (string|nil) callsign of aircraft that ran out of fuel (lose only)
+function UI.draw_score_screen(result)
+  gfx.clear(gfx.kColorWhite)
+  gfx.setFont(card_font)
+
+  local cx = Constants.SCREEN_CENTER_X
+  local y = 20
+
+  -- Heading: "SHIFT COMPLETE" or "SHIFT FAILED"
+  local heading = result.win and Strings.score.win_heading or Strings.score.lose_heading
+  gfx.drawTextAligned(heading, cx, y, kTextAlignment.center)
+  y = y + 18
+
+  -- Divider
+  gfx.drawLine(10, y, Constants.SCREEN_WIDTH - 10, y)
+  y = y + 8
+
+  -- On a failed shift, show which aircraft caused the failure
+  if not result.win and result.failed_callsign then
+    local msg = result.failed_callsign .. " " .. Strings.score.out_of_fuel
+    gfx.drawTextAligned(msg, cx, y, kTextAlignment.center)
+    y = y + 14
+  end
+
+  -- Stats: label left-aligned, value right-aligned in a fixed column
+  local label_x = 40
+  local value_x = Constants.SCREEN_WIDTH - 40
+  local row_h = 14
+
+  gfx.drawText(Strings.score.landed_label, label_x, y)
+  gfx.drawTextAligned(tostring(result.landed_count), value_x, y, kTextAlignment.right)
+  y = y + row_h
+
+  -- Efficiency as a percentage (0–100%)
+  local eff_pct = math.floor(result.avg_fuel_pct * 100)
+  gfx.drawText(Strings.score.efficiency_label, label_x, y)
+  gfx.drawTextAligned(tostring(eff_pct) .. "%", value_x, y, kTextAlignment.right)
+  y = y + row_h
+
+  gfx.drawText(Strings.score.near_miss_label, label_x, y)
+  gfx.drawTextAligned(tostring(result.near_miss_count), value_x, y, kTextAlignment.right)
+  y = y + row_h + 4
+
+  -- Divider above score total
+  gfx.drawLine(10, y, Constants.SCREEN_WIDTH - 10, y)
+  y = y + 8
+
+  gfx.drawText(Strings.score.score_label, label_x, y)
+  gfx.drawTextAligned(tostring(result.total), value_x, y, kTextAlignment.right)
+
+  -- Prompt at bottom
+  gfx.drawTextAligned(Strings.score.prompt, cx, Constants.SCREEN_HEIGHT - 20, kTextAlignment.center)
+
+  gfx.setFont(gfx.getSystemFont())
+end
+
 -- Draws the full shift screen: LANDING section header + cards, HOLDING section header + cards.
 -- cursor is { section = Constants.SECTION_LANDING|SECTION_HOLDING, index = 1 }
 function UI.draw_shift_screen(shift_state, cursor)

@@ -22,4 +22,15 @@ Strings = {
     empty_landing = "no aircraft on approach",
     empty_holding = "no aircraft holding",
   },
+  score = {
+    win_heading = "SHIFT COMPLETE",
+    lose_heading = "SHIFT FAILED",
+    -- Appended after the failed aircraft callsign: "STW4 out of fuel"
+    out_of_fuel = "out of fuel",
+    landed_label = "Aircraft landed:",
+    efficiency_label = "Efficiency:",
+    near_miss_label = "Near misses:",
+    score_label = "Score:",
+    prompt = "press A to continue",
+  },
 }

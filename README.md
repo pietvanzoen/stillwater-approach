@@ -222,7 +222,7 @@ docs/
 - [x] **Queue & holding** — player can move aircraft between landing queue and holding stack
 - [x] **Multiple aircraft** — new aircraft arrive over time, player juggles several at once
 - [x] **Landing resolution** — aircraft at front of queue lands after a timer, shift progresses
-- [ ] **Win/lose + score screen** — shift ends, score calculated
+- [x] **Win/lose + score screen** — shift ends, score calculated
 - [ ] **Season: Spring** — full Spring shift with traffic generation and conditions
 - [ ] **Emergency cards** — medevac and SAR with time-based pressure
 - [ ] **Remaining seasons** — Summer, Fall, Winter with their specific traffic and escalation

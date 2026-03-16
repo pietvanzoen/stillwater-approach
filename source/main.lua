@@ -17,6 +17,7 @@ import("constants")
 import("aircraft")
 import("queue")
 import("cursor")
+import("scoring")
 import("ui")
 import("cover")
 
@@ -25,6 +26,7 @@ local gfx <const> = playdate.graphics
 -- Screen states
 local STATE_TITLE = "title"
 local STATE_SHIFT = "shift"
+local STATE_SCORE = "score"
 
 local state = STATE_TITLE
 
@@ -32,6 +34,9 @@ local state = STATE_TITLE
 local shift_state = nil -- { landing = {}, holding = {} }
 local cursor = nil -- { section = Constants.SECTION_LANDING|SECTION_HOLDING, index = 1 }
 local last_time = nil
+
+-- Score screen state: set when the shift ends (win or lose)
+local score_result = nil -- { win, total, landed_count, avg_fuel_pct, near_miss_count, failed_callsign }
 
 -- Title screen: shows tower-centric cover art with prompt to start
 local function draw_title()
@@ -55,7 +60,29 @@ local function handle_shift_input()
   end
 end
 
--- Shift screen: tick fuel on all aircraft, handle arrivals, handle input, redraw
+-- Checks whether any aircraft in landing or holding has run out of fuel.
+-- Returns the callsign of the first offending aircraft, or nil if none.
+local function find_out_of_fuel(s)
+  for _, aircraft in ipairs(s.landing) do
+    if Aircraft.is_out_of_fuel(aircraft) then
+      return aircraft.callsign
+    end
+  end
+  for _, aircraft in ipairs(s.holding) do
+    if Aircraft.is_out_of_fuel(aircraft) then
+      return aircraft.callsign
+    end
+  end
+  return nil
+end
+
+-- Returns true when every scheduled aircraft has landed and the queues are empty.
+local function shift_is_complete(s)
+  return s.next_arrival > #s.schedule and #s.landing == 0 and #s.holding == 0
+end
+
+-- Shift screen: tick fuel on all aircraft, handle arrivals, handle input, redraw.
+-- Transitions to STATE_SCORE on win or lose.
 local function update_shift()
   local now = playdate.getCurrentTimeMilliseconds()
   local dt = (now - last_time) / 1000.0
@@ -70,6 +97,31 @@ local function update_shift()
   local landed = Queue.resolve_touchdown(shift_state, dt)
   if landed then
     Cursor.clamp_after_land(cursor, shift_state)
+  end
+
+  -- Lose condition: an aircraft ran out of fuel.
+  local failed = find_out_of_fuel(shift_state)
+  if failed then
+    local partial = Scoring.calculate(shift_state.landed)
+    score_result = {
+      win = false,
+      failed_callsign = failed,
+      landed_count = partial.landed_count,
+      avg_fuel_pct = partial.avg_fuel_pct,
+      near_miss_count = partial.near_miss_count,
+      total = 0, -- no score for a failed shift
+    }
+    state = STATE_SCORE
+    return
+  end
+
+  -- Win condition: all aircraft have landed.
+  if shift_is_complete(shift_state) then
+    score_result = Scoring.calculate(shift_state.landed)
+    score_result.win = true
+    score_result.failed_callsign = nil
+    state = STATE_SCORE
+    return
   end
 
   handle_shift_input()
@@ -101,5 +153,13 @@ function playdate.update()
     end
   elseif state == STATE_SHIFT then
     update_shift()
+  elseif state == STATE_SCORE then
+    UI.draw_score_screen(score_result)
+    if playdate.buttonJustPressed(playdate.kButtonA) then
+      -- Return to title; clear shift and score state
+      state = STATE_TITLE
+      shift_state = nil
+      score_result = nil
+    end
   end
 end

@@ -8,7 +8,7 @@ I am new to Lua and new to game development. Write clean, well-commented code an
 
 ## Current milestone
 
-**Milestone 6: Win/lose + score screen** — shift ends, score calculated. See `README.md` for the full milestone list.
+**Milestone 7: Season: Spring** — full Spring shift with traffic generation and conditions. See `README.md` for the full milestone list.
 
 ## Pull request instructions
 
@@ -99,6 +99,8 @@ See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for an ex
 - **Display rounding**: Round display values (e.g., altitude to tens) independently from internal state for visual clarity without affecting game logic.
 - **Landing queue separation**: Enforce MIN_LANDING_SEP per-tick in `Queue.tick_all` by checking previous aircraft altitude; prevents confusion from multiple aircraft descending at nearly the same altitude.
 - **Dwell state**: Use aircraft property (e.g., `touchdown_timer`) for transient UI states (e.g., showing "Landed"); keeps state colocated with data.
+- **Scoring formula**: base(50) + efficiency(0–50, avg fuel % remaining) − near_miss_penalty(10 each). Score clamped to 0. Failed shifts always score 0 regardless of efficiency. A "near miss" = fuel < 10% of `fuel_max` at touchdown (`Constants.CRITICAL_FUEL_PCT`). `fuel_max` is stored on Aircraft.new for display and scoring.
+- **Win/lose state machine**: Lose check runs before win check each tick so a fuel-out on the final landing frame resolves as a loss, not a win. Score screen (`STATE_SCORE`) transitions back to `STATE_TITLE` on A button; all shift/score state is cleared.
 
 ## Playdate font limitations
 
