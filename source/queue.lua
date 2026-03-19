@@ -79,9 +79,11 @@ end
 
 -- Returns the callsign of the first aircraft in landing or holding that has run out of fuel,
 -- or nil if no aircraft is out of fuel.
+-- Aircraft in the touchdown dwell (touchdown_timer set) are excluded: they are safely
+-- on the ground and must not trigger a failure even if their fuel reads 0.
 function Queue.find_out_of_fuel(state)
   for _, aircraft in ipairs(state.landing) do
-    if Aircraft.is_out_of_fuel(aircraft) then
+    if aircraft.touchdown_timer == nil and Aircraft.is_out_of_fuel(aircraft) then
       return aircraft.callsign
     end
   end

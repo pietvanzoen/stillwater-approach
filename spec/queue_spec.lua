@@ -303,6 +303,14 @@ describe("Queue", function()
       local q = Queue.new()
       assert.is_nil(Queue.find_out_of_fuel(q))
     end)
+
+    it("ignores a fuel-exhausted aircraft that is in the touchdown dwell", function()
+      local q = Queue.new()
+      local ac = make_aircraft("STW4", 0)
+      ac.touchdown_timer = 1.5 -- already on the ground, dwell counting down
+      q.landing = { ac }
+      assert.is_nil(Queue.find_out_of_fuel(q))
+    end)
   end)
 
   describe("Queue.is_complete", function()
