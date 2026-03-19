@@ -5,9 +5,7 @@ OS=$(uname -s)
 
 if [ "$OS" = "Darwin" ]; then
   echo "Installing via Homebrew..."
-  brew install lua@5.4 luarocks stylua jq
-  luarocks install luacheck
-  luarocks install busted
+  brew install lua@5.4 luacheck busted stylua jq
 
 elif [ "$OS" = "Linux" ]; then
   echo "Installing via apt + luarocks..."
