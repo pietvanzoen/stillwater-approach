@@ -17,6 +17,7 @@ import("constants")
 import("aircraft")
 import("queue")
 import("cursor")
+import("scoring")
 import("ui")
 import("cover")
 
@@ -25,6 +26,7 @@ local gfx <const> = playdate.graphics
 -- Screen states
 local STATE_TITLE = "title"
 local STATE_SHIFT = "shift"
+local STATE_SCORE = "score"
 
 local state = STATE_TITLE
 
@@ -32,6 +34,9 @@ local state = STATE_TITLE
 local shift_state = nil -- { landing = {}, holding = {} }
 local cursor = nil -- { section = Constants.SECTION_LANDING|SECTION_HOLDING, index = 1 }
 local last_time = nil
+
+-- Score screen state: set when the shift ends (win or lose)
+local score_result = nil -- { win, total, landed_count, avg_fuel_pct, near_miss_count, failed_callsign }
 
 -- Title screen: shows tower-centric cover art with prompt to start
 local function draw_title()
@@ -55,7 +60,8 @@ local function handle_shift_input()
   end
 end
 
--- Shift screen: tick fuel on all aircraft, handle arrivals, handle input, redraw
+-- Shift screen: tick fuel on all aircraft, handle arrivals, handle input, redraw.
+-- Transitions to STATE_SCORE on win or lose.
 local function update_shift()
   local now = playdate.getCurrentTimeMilliseconds()
   local dt = (now - last_time) / 1000.0
@@ -70,6 +76,32 @@ local function update_shift()
   local landed = Queue.resolve_touchdown(shift_state, dt)
   if landed then
     Cursor.clamp_after_land(cursor, shift_state)
+  end
+
+  -- Lose condition: checked before win so a fuel-out on the final landing tick
+  -- resolves as a loss, not a win.
+  local failed = Queue.find_out_of_fuel(shift_state)
+  if failed then
+    local partial = Scoring.calculate(shift_state.landed)
+    score_result = {
+      win = false,
+      failed_callsign = failed,
+      landed_count = partial.landed_count,
+      avg_fuel_pct = 0, -- no efficiency credit on a failed shift
+      near_miss_count = partial.near_miss_count,
+      total = 0, -- no score for a failed shift
+    }
+    state = STATE_SCORE
+    return
+  end
+
+  -- Win condition: all aircraft have landed.
+  if Queue.is_complete(shift_state) then
+    score_result = Scoring.calculate(shift_state.landed)
+    score_result.win = true
+    score_result.failed_callsign = nil
+    state = STATE_SCORE
+    return
   end
 
   handle_shift_input()
@@ -101,5 +133,14 @@ function playdate.update()
     end
   elseif state == STATE_SHIFT then
     update_shift()
+  elseif state == STATE_SCORE then
+    assert(score_result ~= nil, "reached STATE_SCORE with nil score_result")
+    UI.draw_score_screen(score_result)
+    if playdate.buttonJustPressed(playdate.kButtonA) then
+      -- Return to title; clear shift and score state
+      state = STATE_TITLE
+      shift_state = nil
+      score_result = nil
+    end
   end
 end

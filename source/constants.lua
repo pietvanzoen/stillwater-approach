@@ -57,4 +57,8 @@ Constants = {
 
   -- Duration (seconds) to display "Landed" on the card after touchdown before removing it.
   TOUCHDOWN_DWELL = 3,
+
+  -- Fuel fraction below which a landing counts as a near miss (penalises score).
+  -- 0.1 = less than 10% of starting fuel remaining at touchdown.
+  CRITICAL_FUEL_PCT = 0.1,
 }

@@ -163,14 +163,16 @@ Each shift is a self-contained run with its own conditions, traffic mix, emergen
 
 ## Scoring system
 
-- **Base score:** All aircraft land safely = shift complete
-- **Efficiency score:** Average fuel remaining across all aircraft on landing (higher = better)
-- **Emergency score:** Emergency / medical aircraft landed within time window = bonus
-- **Near miss penalty:** Any aircraft that hit critical fuel (< 10%) = score deduction
-- **Seasonal bonus:** See per-season bonus above
-- **Weird bonus:** Hidden. Triggered by specific weird escalation events. Player may not know what caused it.
+Score is calculated at the end of a shift from the list of landed aircraft.
 
-Failure state: any aircraft hits 0 fuel, or an emergency aircraft exceeds its time window. Shift ends immediately. Score screen shows what went wrong.
+- **Base (50 pts):** awarded when at least one aircraft has landed
+- **Efficiency (0–50 pts):** `floor(50 × average fuel % remaining at touchdown)` — calm, well-sequenced approaches score higher
+- **Near-miss penalty (−10 pts each):** any aircraft that landed with less than 10% of its starting fuel remaining
+- **Total:** `max(0, base + efficiency − penalties)`
+
+**Failed shifts** (any aircraft hits 0 fuel while still airborne) score 0 regardless of efficiency. The score screen shows which aircraft caused the failure.
+
+_Emergency bonuses, seasonal bonuses, and weird bonuses are planned for future milestones._
 
 ---
 
@@ -222,7 +224,7 @@ docs/
 - [x] **Queue & holding** — player can move aircraft between landing queue and holding stack
 - [x] **Multiple aircraft** — new aircraft arrive over time, player juggles several at once
 - [x] **Landing resolution** — aircraft at front of queue lands after a timer, shift progresses
-- [ ] **Win/lose + score screen** — shift ends, score calculated
+- [x] **Win/lose + score screen** — shift ends, score calculated
 - [ ] **Season: Spring** — full Spring shift with traffic generation and conditions
 - [ ] **Emergency cards** — medevac and SAR with time-based pressure
 - [ ] **Remaining seasons** — Summer, Fall, Winter with their specific traffic and escalation
