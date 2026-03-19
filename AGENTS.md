@@ -103,6 +103,7 @@ See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for an ex
 - **Win/lose state machine**: Lose check runs before win check each tick so a fuel-out on the final landing frame resolves as a loss, not a win. Score screen (`STATE_SCORE`) transitions back to `STATE_TITLE` on A button; all shift/score state is cleared.
 - **Dwell state and fuel-out**: `Queue.find_out_of_fuel` skips aircraft with `touchdown_timer` set — they are safely on the ground and must not trigger a failure even if fuel reads 0.
 - **Debug shortcuts**: Use `if DEBUG and playdate.buttonJustPressed(playdate.kButtonB) then` pattern for quick in-shift testing shortcuts. Remove before merging.
+- **Failed shift score_result**: `avg_fuel_pct` is set to 0 on the lose path (not carried from partial stats) so the score screen never shows a misleading efficiency % alongside total = 0.
 
 ## Playdate font limitations
 
@@ -112,3 +113,4 @@ See [`docs/atc-altitude-reference.md`](docs/atc-altitude-reference.md) for an ex
 
 - `Constants`, `Strings`, etc. are Playdate-style globals loaded via `import` — they are **not** available in the busted test environment automatically. Spec files that test modules depending on these globals must `require("source.constants")` (etc.) explicitly at the top, or tests will error with "attempt to index global 'Constants' (a nil value)".
 - On macOS, luacheck and busted are installed as Homebrew formulae (not luarocks) to avoid lua version conflicts. If `make lint`/`make test` fail after a Homebrew update, run `make install` again (it uses `--force` to reinstall).
+- **Lua truthiness**: Only `nil` and `false` are falsy. `0`, `""`, and `{}` are all truthy. This differs from C/JS/Python — guard conditions like `== nil` and `not x` behave differently when `x` is `0`.
