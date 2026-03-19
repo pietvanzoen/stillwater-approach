@@ -78,7 +78,8 @@ local function update_shift()
     Cursor.clamp_after_land(cursor, shift_state)
   end
 
-  -- Lose condition: an aircraft ran out of fuel.
+  -- Lose condition: checked before win so a fuel-out on the final landing tick
+  -- resolves as a loss, not a win.
   local failed = Queue.find_out_of_fuel(shift_state)
   if failed then
     local partial = Scoring.calculate(shift_state.landed)
@@ -86,7 +87,7 @@ local function update_shift()
       win = false,
       failed_callsign = failed,
       landed_count = partial.landed_count,
-      avg_fuel_pct = partial.avg_fuel_pct,
+      avg_fuel_pct = 0, -- no efficiency credit on a failed shift
       near_miss_count = partial.near_miss_count,
       total = 0, -- no score for a failed shift
     }
@@ -133,6 +134,7 @@ function playdate.update()
   elseif state == STATE_SHIFT then
     update_shift()
   elseif state == STATE_SCORE then
+    assert(score_result ~= nil, "reached STATE_SCORE with nil score_result")
     UI.draw_score_screen(score_result)
     if playdate.buttonJustPressed(playdate.kButtonA) then
       -- Return to title; clear shift and score state

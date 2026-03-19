@@ -78,9 +78,12 @@ function Queue.resolve_touchdown(state, dt)
 end
 
 -- Returns the callsign of the first aircraft in landing or holding that has run out of fuel,
--- or nil if no aircraft is out of fuel.
--- Aircraft in the touchdown dwell (touchdown_timer set) are excluded: they are safely
+-- or nil if no aircraft is out of fuel. Already-landed aircraft (state.landed) are not checked.
+-- Aircraft in the touchdown dwell (touchdown_timer ~= nil) are excluded: they are safely
 -- on the ground and must not trigger a failure even if their fuel reads 0.
+-- Note: the dwell guard uses == nil (not `not touchdown_timer`). In Lua, 0 is truthy,
+-- so both forms behave identically for number timers. The explicit nil check is kept
+-- for clarity.
 function Queue.find_out_of_fuel(state)
   for _, aircraft in ipairs(state.landing) do
     if aircraft.touchdown_timer == nil and Aircraft.is_out_of_fuel(aircraft) then
@@ -95,10 +98,11 @@ function Queue.find_out_of_fuel(state)
   return nil
 end
 
--- Returns true when the shift is complete: all scheduled aircraft have arrived
--- and both landing and holding queues are empty.
+-- Returns true when the shift is complete: the schedule is non-empty, all scheduled
+-- aircraft have arrived, and both landing and holding queues are empty.
+-- Requires a non-empty schedule so a fresh unscheduled queue never reads as complete.
 function Queue.is_complete(state)
-  return state.next_arrival > #state.schedule and #state.landing == 0 and #state.holding == 0
+  return #state.schedule > 0 and state.next_arrival > #state.schedule and #state.landing == 0 and #state.holding == 0
 end
 
 -- Advances time by dt seconds for every aircraft in both lists.

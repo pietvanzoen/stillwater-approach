@@ -68,6 +68,26 @@ describe("Scoring.calculate", function()
     assert.are.equal(0, result.total)
   end)
 
+  it("treats aircraft with fuel_max = 0 as a near miss with 0% efficiency", function()
+    -- Defensive: fuel_max = 0 would cause 0/0 (NaN) without a guard
+    local landed = { make_aircraft(0, 0) }
+    local result = Scoring.calculate(landed)
+    assert.are.equal(1, result.near_miss_count)
+    assert.are.equal(0, result.avg_fuel_pct)
+    -- base(50) + efficiency(0) - penalty(10) = 40
+    assert.are.equal(40, result.total)
+  end)
+
+  it("combines efficiency and near-miss penalty correctly for a mixed result", function()
+    -- Aircraft 1: 45/90 = 0.5 (not a near miss), Aircraft 2: 5/90 ≈ 0.056 (near miss)
+    -- avg_fuel_pct = (0.5 + 0.056) / 2 ≈ 0.278 → efficiency = floor(50 * 0.278) = 13
+    -- base(50) + efficiency(13) - penalty(10) = 53
+    local landed = { make_aircraft(45, 90), make_aircraft(5, 90) }
+    local result = Scoring.calculate(landed)
+    assert.are.equal(1, result.near_miss_count)
+    assert.are.equal(53, result.total)
+  end)
+
   it("computes avg_fuel_pct across all aircraft", function()
     -- Aircraft 1: 90/90 = 1.0, Aircraft 2: 45/90 = 0.5 → avg = 0.75
     local landed = {

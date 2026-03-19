@@ -311,6 +311,30 @@ describe("Queue", function()
       q.landing = { ac }
       assert.is_nil(Queue.find_out_of_fuel(q))
     end)
+
+    it("ignores a fuel-exhausted aircraft with touchdown_timer = 0 (still treated as dwell)", function()
+      -- In Lua, 0 ~= nil so the dwell guard still holds; resolve_touchdown removes
+      -- the aircraft the same tick the timer expires, so this case cannot persist.
+      local q = Queue.new()
+      local ac = make_aircraft("STW4", 0)
+      ac.touchdown_timer = 0
+      q.landing = { ac }
+      assert.is_nil(Queue.find_out_of_fuel(q))
+    end)
+
+    it("returns the landing aircraft when both queues have exhausted aircraft", function()
+      -- landing is checked before holding; the landing callsign takes priority
+      local q = Queue.new()
+      q.landing = { make_aircraft("LAND1", 0) }
+      q.holding = { make_aircraft("HOLD1", 0) }
+      assert.equal("LAND1", Queue.find_out_of_fuel(q))
+    end)
+
+    it("finds an exhausted aircraft that is not first in the landing list", function()
+      local q = Queue.new()
+      q.landing = { make_aircraft("LEAD", 50), make_aircraft("TRAIL", 0) }
+      assert.equal("TRAIL", Queue.find_out_of_fuel(q))
+    end)
   end)
 
   describe("Queue.is_complete", function()
@@ -342,6 +366,12 @@ describe("Queue", function()
       q.schedule = { { time = 0, aircraft = make_aircraft("A", 90) } }
       q.next_arrival = 2 -- past the end of schedule
       assert.is_true(Queue.is_complete(q))
+    end)
+
+    it("returns false when schedule is empty (no aircraft were ever scheduled)", function()
+      -- A fresh queue with no schedule must not count as complete
+      local q = Queue.new()
+      assert.is_false(Queue.is_complete(q))
     end)
   end)
 

@@ -26,7 +26,8 @@ function Scoring.calculate(landed)
   local fuel_pct_sum = 0
   local near_miss_count = 0
   for _, aircraft in ipairs(landed) do
-    local pct = aircraft.fuel / aircraft.fuel_max
+    -- Guard against invalid fuel_max to prevent NaN from corrupting the result.
+    local pct = (aircraft.fuel_max and aircraft.fuel_max > 0) and (aircraft.fuel / aircraft.fuel_max) or 0
     fuel_pct_sum = fuel_pct_sum + pct
     if pct < Constants.CRITICAL_FUEL_PCT then
       near_miss_count = near_miss_count + 1

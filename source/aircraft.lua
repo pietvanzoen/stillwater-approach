@@ -6,7 +6,7 @@ Aircraft = {}
 
 -- Creates a new aircraft record.
 -- fuel is in seconds (e.g. 90 = 1 min 30 sec remaining).
--- altitude is in feet (e.g. 8000). Static for now; will become landing timer in Milestone 5.
+-- altitude is AGL in feet. Decreases at Constants.APPROACH_RATE ft/sec while in the landing queue; static in holding.
 function Aircraft.new(callsign, fuel, altitude, situation)
   return {
     callsign = callsign,
