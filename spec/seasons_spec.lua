@@ -12,14 +12,14 @@ describe("Seasons", function()
     it("each entry has a numeric time field", function()
       local schedule = Seasons.spring()
       for _, entry in ipairs(schedule) do
-        assert.equals("number", type(entry.time))
+        assert.equal("number", type(entry.time))
       end
     end)
 
     it("each entry has an aircraft table", function()
       local schedule = Seasons.spring()
       for _, entry in ipairs(schedule) do
-        assert.equals("table", type(entry.aircraft))
+        assert.equal("table", type(entry.aircraft))
       end
     end)
 
@@ -27,10 +27,10 @@ describe("Seasons", function()
       local schedule = Seasons.spring()
       for _, entry in ipairs(schedule) do
         local ac = entry.aircraft
-        assert.equals("string", type(ac.callsign))
-        assert.equals("number", type(ac.fuel))
-        assert.equals("number", type(ac.altitude))
-        assert.equals("string", type(ac.situation))
+        assert.equal("string", type(ac.callsign))
+        assert.equal("number", type(ac.fuel))
+        assert.equal("number", type(ac.altitude))
+        assert.equal("string", type(ac.situation))
       end
     end)
 
@@ -44,7 +44,7 @@ describe("Seasons", function()
     it("fuel_max equals fuel on each aircraft", function()
       local schedule = Seasons.spring()
       for _, entry in ipairs(schedule) do
-        assert.equals(entry.aircraft.fuel, entry.aircraft.fuel_max)
+        assert.equal(entry.aircraft.fuel, entry.aircraft.fuel_max)
       end
     end)
 
