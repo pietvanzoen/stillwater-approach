@@ -201,14 +201,18 @@ In practice this means:
 
 ```
 source/
-  main.lua              -- entry point
-  aircraft.lua          -- aircraft data, card logic, fuel countdown
+  main.lua              -- entry point, state machine (title / shift / score)
+  aircraft.lua          -- aircraft data: callsign, fuel, altitude, situation, notes
   queue.lua             -- landing queue and holding stack management
-  ui.lua                -- drawing cards, lists, status display
-  game.lua              -- game state, shift logic, win/lose, scoring
-  seasons.lua           -- season definitions, traffic generation, conditions
-  flavor.lua            -- callsigns, radio text, weird escalation events
-  logbook.lua           -- persistent logbook across sessions
+  cursor.lua            -- d-pad navigation between sections
+  scoring.lua           -- end-of-shift score calculation
+  seasons.lua           -- season definitions and traffic schedules
+  ui.lua                -- drawing cards, lists, score screen, notes bar
+  cover.lua             -- title screen cover art
+  strings.lua           -- all UI text (centralised)
+  constants.lua         -- screen layout and game parameters
+  flavor.lua            -- (planned) callsigns, radio text, weird escalation events
+  logbook.lua           -- (planned) persistent logbook across sessions
 docs/
   atc-altitude-reference.md  -- ATC altitude research: holding stack conventions,
                              --   mountainous terrain clearance rules, approach
@@ -225,7 +229,7 @@ docs/
 - [x] **Multiple aircraft** — new aircraft arrive over time, player juggles several at once
 - [x] **Landing resolution** — aircraft at front of queue lands after a timer, shift progresses
 - [x] **Win/lose + score screen** — shift ends, score calculated
-- [ ] **Season: Spring** — full Spring shift with traffic generation and conditions
+- [x] **Season: Spring** — full Spring shift with traffic generation and conditions
 - [ ] **Emergency cards** — medevac and SAR with time-based pressure
 - [ ] **Remaining seasons** — Summer, Fall, Winter with their specific traffic and escalation
 - [ ] **Logbook** — persistent across sessions using Playdate datastore

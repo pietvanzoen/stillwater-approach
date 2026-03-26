@@ -41,6 +41,9 @@ Constants = {
   SECTION_HEADER_HEIGHT = 14,
   CARD_LIST_START_Y = 4,
   MAX_LANDING = 3,
+  -- Y position of the notes bar at the bottom of the shift screen.
+  -- Shows the focused aircraft's notes (flavor text) without cluttering the cards.
+  NOTES_BAR_Y = 222,
 
   -- Section name identifiers used in cursor state
   SECTION_LANDING = "landing",

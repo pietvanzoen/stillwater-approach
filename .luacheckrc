@@ -14,6 +14,7 @@ globals = {
   "UI",
   "Cover",
   "Scoring",
+  "Seasons",
   "log",
 }
 
