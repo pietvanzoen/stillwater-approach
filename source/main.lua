@@ -18,6 +18,7 @@ import("aircraft")
 import("queue")
 import("cursor")
 import("scoring")
+import("seasons")
 import("ui")
 import("cover")
 
@@ -112,20 +113,12 @@ function playdate.update()
   if state == STATE_TITLE then
     draw_title()
     if playdate.buttonJustPressed(playdate.kButtonA) then
-      -- Initialise shift with timed arrivals; landing and holding start empty
-      shift_state = Queue.new(Constants.MAX_LANDING)
-      shift_state.elapsed = 0
+      -- Initialise shift with the Spring season schedule.
       -- Altitudes are AGL (feet above the runway). Holding aircraft maintain these altitudes
       -- until promoted to the landing queue, at which point they descend to 0 (touchdown).
-      -- Values reflect realistic KSTW holding stack: 2500/3500/4500 ft AGL in 1000 ft increments.
-      shift_state.schedule = {
-        { time = 0, aircraft = Aircraft.new("STW4", 90, 2500, "Normal") },
-        { time = 15, aircraft = Aircraft.new("SVC12", 120, 3500, "Cargo Shift") },
-        { time = 40, aircraft = Aircraft.new("TNK81", 75, 2500, "Low Fuel") },
-        { time = 70, aircraft = Aircraft.new("QUL3", 140, 4500, "Normal") },
-        { time = 100, aircraft = Aircraft.new("CAM1", 60, 3000, "Medical") },
-        { time = 130, aircraft = Aircraft.new("PTA7", 110, 4000, "Normal") },
-      }
+      shift_state = Queue.new(Constants.MAX_LANDING)
+      shift_state.elapsed = 0
+      shift_state.schedule = Seasons.spring()
       shift_state.next_arrival = 1
       cursor = { section = Constants.SECTION_HOLDING, index = 1 }
       last_time = playdate.getCurrentTimeMilliseconds()

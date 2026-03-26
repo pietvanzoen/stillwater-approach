@@ -7,13 +7,15 @@ Aircraft = {}
 -- Creates a new aircraft record.
 -- fuel is in seconds (e.g. 90 = 1 min 30 sec remaining).
 -- altitude is AGL in feet. Decreases at Constants.APPROACH_RATE ft/sec while in the landing queue; static in holding.
-function Aircraft.new(callsign, fuel, altitude, situation)
+-- notes is optional flavor text shown at the bottom of the shift screen when this aircraft is focused.
+function Aircraft.new(callsign, fuel, altitude, situation, notes)
   return {
     callsign = callsign,
     fuel = fuel,
     fuel_max = fuel, -- original fuel, used for display (e.g. fuel bar)
     altitude = altitude,
     situation = situation,
+    notes = notes, -- optional: radio flavor text / weird escalation hints
   }
 end
 

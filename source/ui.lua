@@ -144,8 +144,19 @@ function UI.draw_score_screen(result)
   gfx.setFont(gfx.getSystemFont())
 end
 
+-- Returns the aircraft currently under the cursor, or nil if the section is empty.
+local function focused_aircraft(shift_state, cursor)
+  if cursor.section == Constants.SECTION_LANDING then
+    return shift_state.landing[cursor.index]
+  else
+    return shift_state.holding[cursor.index]
+  end
+end
+
 -- Draws the full shift screen: LANDING section header + cards, HOLDING section header + cards.
 -- cursor is { section = Constants.SECTION_LANDING|SECTION_HOLDING, index = 1 }
+-- If the focused aircraft has a notes field, draws a thin divider and the notes text
+-- at the bottom of the screen (NOTES_BAR_Y) as flavor/radio chatter.
 function UI.draw_shift_screen(shift_state, cursor)
   local c = Constants
   gfx.clear(gfx.kColorWhite)
@@ -184,5 +195,16 @@ function UI.draw_shift_screen(shift_state, cursor)
       UI.draw_aircraft_card(aircraft, c.CARD.X, current_y, focused)
       current_y = current_y + card_step
     end
+  end
+
+  -- Notes bar: if the focused aircraft has flavor text, show it at the bottom.
+  -- A thin divider line visually separates the card list from the notes.
+  local ac = focused_aircraft(shift_state, cursor)
+  if ac and ac.notes then
+    local divider_y = c.NOTES_BAR_Y - 4
+    gfx.drawLine(0, divider_y, c.SCREEN_WIDTH, divider_y)
+    gfx.setFont(card_font)
+    gfx.drawText(ac.notes, c.CARD.X, c.NOTES_BAR_Y)
+    gfx.setFont(gfx.getSystemFont())
   end
 end
