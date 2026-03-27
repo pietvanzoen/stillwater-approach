@@ -1,5 +1,4 @@
 -- Stillwater Approach
--- Entry point for the Playdate game
 
 -- Debug logging: set to false before release to silence all log() calls
 local DEBUG <const> = true
@@ -24,7 +23,6 @@ import("cover")
 
 local gfx <const> = playdate.graphics
 
--- Screen states
 local STATE_TITLE = "title"
 local STATE_SHIFT = "shift"
 local STATE_SCORE = "score"
@@ -39,14 +37,12 @@ local last_time = nil
 -- Score screen state: set when the shift ends (win or lose)
 local score_result = nil -- { win, total, landed_count, avg_fuel_pct, near_miss_count, failed_callsign }
 
--- Title screen: shows tower-centric cover art with prompt to start
 local function draw_title()
   Cover.draw()
   gfx.setColor(gfx.kColorBlack)
   gfx.drawTextAligned(Strings.title.prompt, Constants.SCREEN_CENTER_X, Constants.TITLE_PROMPT_Y, kTextAlignment.center)
 end
 
--- Handles d-pad and A button input during a shift.
 local function handle_shift_input()
   if playdate.buttonJustPressed(playdate.kButtonUp) then
     Cursor.up(cursor, shift_state)
@@ -61,8 +57,6 @@ local function handle_shift_input()
   end
 end
 
--- Shift screen: tick fuel on all aircraft, handle arrivals, handle input, redraw.
--- Transitions to STATE_SCORE on win or lose.
 local function update_shift()
   local now = playdate.getCurrentTimeMilliseconds()
   local dt = (now - last_time) / 1000.0
@@ -72,8 +66,6 @@ local function update_shift()
   Queue.check_arrivals(shift_state, shift_state.elapsed)
   Queue.tick_all(shift_state, dt)
 
-  -- Landing resolution: manage touchdown dwell and runway clearing.
-  -- Returns true when land_front is called so we can keep the cursor valid.
   local landed = Queue.resolve_touchdown(shift_state, dt)
   if landed then
     Cursor.clamp_after_land(cursor, shift_state)
@@ -96,7 +88,6 @@ local function update_shift()
     return
   end
 
-  -- Win condition: all aircraft have landed.
   if Queue.is_complete(shift_state) then
     score_result = Scoring.calculate(shift_state.landed)
     score_result.win = true
@@ -113,9 +104,6 @@ function playdate.update()
   if state == STATE_TITLE then
     draw_title()
     if playdate.buttonJustPressed(playdate.kButtonA) then
-      -- Initialise shift with the Spring season schedule.
-      -- Altitudes are AGL (feet above the runway). Holding aircraft maintain these altitudes
-      -- until promoted to the landing queue, at which point they descend to 0 (touchdown).
       shift_state = Queue.new(Constants.MAX_LANDING)
       shift_state.elapsed = 0
       shift_state.schedule = Seasons.spring()
@@ -130,7 +118,6 @@ function playdate.update()
     assert(score_result ~= nil, "reached STATE_SCORE with nil score_result")
     UI.draw_score_screen(score_result)
     if playdate.buttonJustPressed(playdate.kButtonA) then
-      -- Return to title; clear shift and score state
       state = STATE_TITLE
       shift_state = nil
       score_result = nil

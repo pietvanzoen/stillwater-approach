@@ -1,6 +1,3 @@
--- Game-wide constants.
--- Centralises magic numbers for screen layout and game parameters.
-
 -- luacheck: globals Constants
 Constants = {
   -- Playdate display is always 400x240

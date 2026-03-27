@@ -1,20 +1,12 @@
--- Queue module: manages the landing and holding lists.
--- Pure Lua, no SDK dependency — fully unit-testable.
-
 -- luacheck: globals Queue
 Queue = {}
 
--- Returns a new queue state with empty landing and holding lists.
--- max_landing caps how many aircraft can be in the landing list (default 3).
 -- schedule and next_arrival are initialised to safe defaults so check_arrivals
 -- can be called on a fresh queue without error.
--- landed accumulates aircraft that have touched down, for use in scoring.
 function Queue.new(max_landing)
   return { landing = {}, holding = {}, landed = {}, max_landing = max_landing or 3, schedule = {}, next_arrival = 1 }
 end
 
--- Moves the aircraft at `index` in holding to the bottom of landing.
--- Returns true on success, false if index is out of range or landing list is full.
 function Queue.promote(state, index)
   if index < 1 or index > #state.holding then
     return false
@@ -27,7 +19,6 @@ function Queue.promote(state, index)
   return true
 end
 
--- Appends any scheduled aircraft whose arrival time <= elapsed to holding.
 -- state.schedule: sorted array of { time = <seconds>, aircraft = <Aircraft> }
 -- state.next_arrival: index of the next unprocessed schedule entry (starts at 1)
 function Queue.check_arrivals(state, elapsed)
@@ -42,9 +33,6 @@ function Queue.check_arrivals(state, elapsed)
   end
 end
 
--- Removes the front of the landing queue when its altitude reaches 0 (touchdown).
--- Appends the landed aircraft to state.landed for later scoring.
--- Returns the aircraft on success, nil if landing is empty.
 function Queue.land_front(state)
   if #state.landing == 0 then
     return nil
@@ -77,13 +65,10 @@ function Queue.resolve_touchdown(state, dt)
   return false
 end
 
--- Returns the callsign of the first aircraft in landing or holding that has run out of fuel,
--- or nil if no aircraft is out of fuel. Already-landed aircraft (state.landed) are not checked.
 -- Aircraft in the touchdown dwell (touchdown_timer ~= nil) are excluded: they are safely
 -- on the ground and must not trigger a failure even if their fuel reads 0.
--- Note: the dwell guard uses == nil (not `not touchdown_timer`). In Lua, 0 is truthy,
--- so both forms behave identically for number timers. The explicit nil check is kept
--- for clarity.
+-- Note: the dwell guard uses `== nil` (not `not touchdown_timer`). In Lua, 0 is truthy,
+-- so both forms behave identically for number timers. The explicit nil check is clearer.
 function Queue.find_out_of_fuel(state)
   for _, aircraft in ipairs(state.landing) do
     if aircraft.touchdown_timer == nil and Aircraft.is_out_of_fuel(aircraft) then
@@ -105,24 +90,17 @@ function Queue.is_complete(state)
   return #state.schedule > 0 and state.next_arrival > #state.schedule and #state.landing == 0 and #state.holding == 0
 end
 
--- Advances time by dt seconds for every aircraft in both lists.
--- Aircraft in the landing queue also lose altitude at Constants.APPROACH_RATE ft/sec,
--- simulating the approach descent. Holding aircraft maintain their assigned altitude.
 -- Landing aircraft only descend if there is at least MIN_LANDING_SEP feet of separation
--- from the aircraft ahead, preventing visual confusion from multiple aircraft descending
--- at nearly the same altitude.
+-- from the aircraft ahead, preventing visual confusion when multiple aircraft are close together.
 function Queue.tick_all(state, dt)
   for i, aircraft in ipairs(state.landing) do
     Aircraft.tick(aircraft, dt)
     local prev = state.landing[i - 1]
-    -- Only descend if there is enough gap from the aircraft ahead,
-    -- or if this is the first in the queue.
     if prev == nil or aircraft.altitude - prev.altitude >= Constants.MIN_LANDING_SEP then
       aircraft.altitude = math.max(0, aircraft.altitude - Constants.APPROACH_RATE * dt)
     end
   end
   for _, aircraft in ipairs(state.holding) do
     Aircraft.tick(aircraft, dt)
-    -- Holding: aircraft circle at their assigned altitude, no descent.
   end
 end

@@ -1,6 +1,3 @@
--- UI module: drawing helpers using the Playdate SDK.
--- Depends on Constants and Strings globals (loaded via import in main.lua).
-
 local gfx = playdate.graphics
 
 -- luacheck: globals UI
@@ -38,10 +35,8 @@ function UI.draw_aircraft_card(aircraft, x, y, focused, on_approach)
   gfx.drawRect(x, y, c.WIDTH, c.HEIGHT)
   gfx.setLineWidth(1)
 
-  -- Solid left tab (like a physical strip-holder bay)
   gfx.fillRect(x, y, c.TAB_WIDTH, c.HEIGHT)
 
-  -- Column dividers
   local div1, div2, div3 = x + c.DIV1_X, x + c.DIV2_X, x + c.DIV3_X
   gfx.drawLine(div1, y, div1, y + c.HEIGHT - 1)
   gfx.drawLine(div2, y, div2, y + c.HEIGHT - 1)
@@ -63,14 +58,12 @@ function UI.draw_aircraft_card(aircraft, x, y, focused, on_approach)
   gfx.setFont(gfx.getSystemFont())
 end
 
--- Draws a placeholder line when a section has no aircraft.
 local function draw_empty_state(text, y)
   gfx.setFont(card_font)
   gfx.drawTextAligned(text, Constants.SCREEN_WIDTH / 2, y, kTextAlignment.center)
   gfx.setFont(gfx.getSystemFont())
 end
 
--- Draws a section header label centred on screen.
 local function draw_section_header(text, y)
   gfx.setFont(card_font)
   gfx.drawTextAligned(text, Constants.SCREEN_WIDTH / 2, y, kTextAlignment.center)
@@ -100,28 +93,23 @@ function UI.draw_score_screen(result)
   local cx = Constants.SCREEN_CENTER_X
   local y = TOP_Y
 
-  -- Heading: "SHIFT COMPLETE" or "SHIFT FAILED"
   local heading = result.win and Strings.score.win_heading or Strings.score.lose_heading
   gfx.drawTextAligned(heading, cx, y, kTextAlignment.center)
   y = y + HEADING_H
 
-  -- Divider
   gfx.drawLine(MARGIN_X, y, Constants.SCREEN_WIDTH - MARGIN_X, y)
   y = y + DIVIDER_H
 
-  -- On a failed shift, show which aircraft caused the failure
   if not result.win and result.failed_callsign then
     local msg = result.failed_callsign .. " " .. Strings.score.out_of_fuel
     gfx.drawTextAligned(msg, cx, y, kTextAlignment.center)
     y = y + FAIL_ROW_H
   end
 
-  -- Stats: label left-aligned, value right-aligned
   gfx.drawText(Strings.score.landed_label, LABEL_X, y)
   gfx.drawTextAligned(tostring(result.landed_count), VALUE_X, y, kTextAlignment.right)
   y = y + ROW_H
 
-  -- Efficiency as a percentage (0–100%)
   local eff_pct = math.floor(result.avg_fuel_pct * 100)
   gfx.drawText(Strings.score.efficiency_label, LABEL_X, y)
   gfx.drawTextAligned(tostring(eff_pct) .. "%", VALUE_X, y, kTextAlignment.right)
@@ -131,14 +119,12 @@ function UI.draw_score_screen(result)
   gfx.drawTextAligned(tostring(result.near_miss_count), VALUE_X, y, kTextAlignment.right)
   y = y + ROW_H + EXTRA_GAP
 
-  -- Divider above score total
   gfx.drawLine(MARGIN_X, y, Constants.SCREEN_WIDTH - MARGIN_X, y)
   y = y + DIVIDER_H
 
   gfx.drawText(Strings.score.score_label, LABEL_X, y)
   gfx.drawTextAligned(tostring(result.total), VALUE_X, y, kTextAlignment.right)
 
-  -- Prompt at bottom
   gfx.drawTextAligned(Strings.score.prompt, cx, PROMPT_Y, kTextAlignment.center)
 
   gfx.setFont(gfx.getSystemFont())
@@ -164,13 +150,11 @@ function UI.draw_shift_screen(shift_state, cursor)
   local card_step = c.CARD.HEIGHT + c.CARD.CARD_GAP
   local current_y = c.CARD_LIST_START_Y
 
-  -- LANDING section header
   local landing_count = #shift_state.landing
   local landing_header = string.format("%s %d/%d", Strings.shift.landing_label, landing_count, c.MAX_LANDING)
   draw_section_header(landing_header, current_y)
   current_y = current_y + c.SECTION_HEADER_HEIGHT
 
-  -- Landing cards
   if #shift_state.landing == 0 then
     draw_empty_state(Strings.shift.empty_landing, current_y)
     current_y = current_y + card_step
@@ -182,11 +166,9 @@ function UI.draw_shift_screen(shift_state, cursor)
     end
   end
 
-  -- HOLDING section header
   draw_section_header(Strings.shift.holding_label, current_y)
   current_y = current_y + c.SECTION_HEADER_HEIGHT
 
-  -- Holding cards
   if #shift_state.holding == 0 then
     draw_empty_state(Strings.shift.empty_holding, current_y)
   else
@@ -197,8 +179,6 @@ function UI.draw_shift_screen(shift_state, cursor)
     end
   end
 
-  -- Notes bar: if the focused aircraft has flavor text, show it at the bottom.
-  -- A thin divider line visually separates the card list from the notes.
   local ac = focused_aircraft(shift_state, cursor)
   if ac and ac.notes then
     local divider_y = c.NOTES_BAR_Y - 4

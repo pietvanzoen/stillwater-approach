@@ -1,10 +1,6 @@
--- Seasons module: defines shift schedules for each season.
 -- Each season function returns a sorted array of arrival entries:
 --   { time = <seconds>, aircraft = Aircraft.new(...) }
 -- The schedule is consumed by Queue.check_arrivals via shift_state.schedule.
---
--- Spring is the first implemented season: tutorial-paced, light traffic,
--- forgiving fuel loads. Introduces core mechanics at a gentle difficulty.
 
 -- luacheck: globals Seasons
 Seasons = {}
