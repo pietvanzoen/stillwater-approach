@@ -18,8 +18,7 @@ globals = {
   "log",
 }
 
--- Ignore line length (StyLua handles formatting)
-ignore = { "631" }
+max_line_length = 120
 
 max_cyclomatic_complexity = 10
 
