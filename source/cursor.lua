@@ -1,6 +1,3 @@
--- Cursor module: manages cursor navigation between the landing and holding sections.
--- Pure Lua, no SDK dependency — fully unit-testable.
---
 -- The cursor is a table { section = <string>, index = <number> }.
 -- All functions mutate the cursor in place (consistent with Queue's pattern of
 -- mutating state), rather than returning a new value.
@@ -8,9 +5,7 @@
 -- luacheck: globals Cursor
 Cursor = {}
 
--- Moves the cursor up one position within its current section.
--- If already at the top of holding and landing has aircraft, crosses into landing
--- (focusing the last/bottom landing card). Otherwise stays in place.
+-- At the top of holding, crosses into landing (focusing the last card). Otherwise stays in place.
 function Cursor.up(cursor, state)
   if cursor.index > 1 then
     cursor.index = cursor.index - 1
@@ -20,9 +15,7 @@ function Cursor.up(cursor, state)
   end
 end
 
--- Moves the cursor down one position within its current section.
--- If already at the bottom of landing and holding has aircraft, crosses into holding
--- (focusing the first/top holding card). Otherwise stays in place.
+-- At the bottom of landing, crosses into holding (focusing the first card). Otherwise stays in place.
 function Cursor.down(cursor, state)
   local cur_list = state[cursor.section]
   if cursor.index < #cur_list then

@@ -1,6 +1,3 @@
--- Scoring module: calculates end-of-shift score from landed aircraft.
--- Pure Lua, no SDK dependency — fully unit-testable.
-
 -- luacheck: globals Scoring
 Scoring = {}
 
