@@ -5,7 +5,7 @@
 -- luacheck: globals Cursor
 Cursor = {}
 
--- At the top of holding, crosses into landing (focusing the last card). Otherwise stays in place.
+-- Moves up within the current section; at the top of holding, crosses into landing (focusing the last card). Otherwise stays in place.
 function Cursor.up(cursor, state)
   if cursor.index > 1 then
     cursor.index = cursor.index - 1
@@ -15,7 +15,7 @@ function Cursor.up(cursor, state)
   end
 end
 
--- At the bottom of landing, crosses into holding (focusing the first card). Otherwise stays in place.
+-- Moves down within the current section; at the bottom of landing, crosses into holding (focusing the first card). Otherwise stays in place.
 function Cursor.down(cursor, state)
   local cur_list = state[cursor.section]
   if cursor.index < #cur_list then
