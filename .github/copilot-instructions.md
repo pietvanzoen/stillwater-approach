@@ -1,36 +1,26 @@
-# Copilot Instructions — Stillwater Approach
+---
+excludeAgent: "coding-agent"
+---
 
-Stillwater Approach is a card-based ATC game for the Playdate (a handheld with a 400×240 black-and-white display). It is written in Lua using the Playdate SDK.
+Stillwater Approach is a card-based ATC game for the [Playdate](https://play.date) — a handheld with a 400×240 1-bit display. Written in Lua using the Playdate SDK.
 
-## Code style
+## Review focus
 
-- Comments only where code cannot speak for itself: non-obvious *why* decisions, behavioral gotchas, magic-number semantics, subtle ordering constraints. Do not flag missing comments on self-evident code.
-- No LuaLS `@param`/`@return` type annotations — do not suggest adding them.
-- No external libraries. Standard Playdate SDK only.
+Flag these:
+- Logic bugs: off-by-ones, wrong comparisons, incorrect state mutations
+- Missing `nil` guards at module boundaries or when indexing optional fields
+- Anything likely to cause frame drops at 60 fps (allocations in the update loop, redundant draws)
+- Game balance issues visible from the code (e.g. fuel loads that make a shift unwinnable)
 
-## Lua conventions
-
-- Only `nil` and `false` are falsy. `0`, `""`, and `{}` are truthy. Guard conditions should use `== nil` or `~= nil` explicitly when checking for the absence of a value — do not suggest replacing these with `not x` when `x` could be `0`.
-- Module pattern: `function Module.new(...)` returning a plain table. No metatables or OOP inheritance.
-- State is mutated in place (queue state, cursor) rather than returned as new values — this is intentional.
+Do not flag these:
+- Missing comments on self-evident code — comments are intentionally minimal
+- Missing type annotations — this project does not use LuaLS `@param`/`@return` blocks
+- Abstractions that could be DRYed up but work correctly
+- Drawing code in `source/cover.lua` — intentionally uncommented
 
 ## Game domain
 
-- Altitude is AGL (Above Ground Level, feet above the runway). 0 = touchdown. Do not suggest MSL conversions.
-- Fuel is in seconds. `fuel_max` stores the starting fuel for efficiency scoring.
-- The landing queue descends at `Constants.APPROACH_RATE` ft/sec. Holding aircraft maintain their assigned altitude.
-- Lose condition is checked before win condition each tick — this is intentional (fuel-out on the final frame resolves as a loss).
-
-## What to focus reviews on
-
-- Logic correctness: off-by-ones, wrong comparisons, state mutation bugs
-- Playdate constraints: anything that would cause performance issues at 60 fps on limited hardware
-- Game balance issues visible from the code (e.g. fuel margins that make a shift unwinnable)
-- Missing nil guards at boundaries
-
-## What to skip
-
-- Style suggestions that conflict with the conventions above
-- Suggestions to add type annotations or docstrings to every function
-- Refactors that increase abstraction without fixing a real problem
-- Comments on drawing code in `cover.lua` — it is intentionally uncommented
+- Altitude is **AGL** (feet above the runway). 0 = touchdown. Never suggest MSL.
+- Fuel is in **seconds**. `fuel_max` = starting fuel, kept for scoring.
+- **Lose condition is checked before win condition each tick** — intentional. A fuel-out on the final landing frame must resolve as a loss.
+- The landing queue descends at `Constants.APPROACH_RATE` ft/sec. Holding aircraft maintain assigned altitude.
