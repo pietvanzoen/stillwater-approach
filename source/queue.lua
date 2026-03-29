@@ -83,6 +83,22 @@ function Queue.find_out_of_fuel(state)
   return nil
 end
 
+-- Mirrors find_out_of_fuel but checks the emergency time countdown.
+-- Aircraft in the touchdown dwell are excluded: safely on the ground.
+function Queue.find_time_expired(state)
+  for _, aircraft in ipairs(state.landing) do
+    if aircraft.touchdown_timer == nil and Aircraft.is_time_expired(aircraft) then
+      return aircraft.callsign
+    end
+  end
+  for _, aircraft in ipairs(state.holding) do
+    if Aircraft.is_time_expired(aircraft) then
+      return aircraft.callsign
+    end
+  end
+  return nil
+end
+
 -- Returns true when the shift is complete: the schedule is non-empty, all scheduled
 -- aircraft have arrived, and both landing and holding queues are empty.
 -- Requires a non-empty schedule so a fresh unscheduled queue never reads as complete.
