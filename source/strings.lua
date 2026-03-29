@@ -10,6 +10,7 @@ Strings = {
     -- ASCII 'v' signals descent (UTF-8 down-arrow ▼ not supported by Roobert-9-Mono-Condensed bitmap font).
     altitude_approach_prefix = "ALTv ",
     fuel_prefix = "F: ",
+    time_prefix = "T: ",
     landed = "Landed",
   },
   shift = {
@@ -24,6 +25,8 @@ Strings = {
     lose_heading = "SHIFT FAILED",
     -- Appended after the failed aircraft callsign: "STW4 out of fuel"
     out_of_fuel = "out of fuel",
+    -- Appended after the failed aircraft callsign: "GCS1 time expired"
+    time_expired = "time expired",
     landed_label = "Aircraft landed:",
     efficiency_label = "Efficiency:",
     near_miss_label = "Near misses:",

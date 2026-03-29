@@ -35,7 +35,7 @@ local cursor = nil -- { section = Constants.SECTION_LANDING|SECTION_HOLDING, ind
 local last_time = nil
 
 -- Score screen state: set when the shift ends (win or lose)
-local score_result = nil -- { win, total, landed_count, avg_fuel_pct, near_miss_count, failed_callsign }
+local score_result = nil -- { win, total, landed_count, avg_fuel_pct, near_miss_count, failed_callsign, failure_type }
 
 local function draw_title()
   Cover.draw()
@@ -71,18 +71,35 @@ local function update_shift()
     Cursor.clamp_after_land(cursor, shift_state)
   end
 
-  -- Lose condition: checked before win so a fuel-out on the final landing tick
-  -- resolves as a loss, not a win.
+  -- Lose conditions: checked before win so a failure on the final landing tick
+  -- resolves as a loss, not a win. Fuel checked before time (arbitrary ordering).
   local failed = Queue.find_out_of_fuel(shift_state)
   if failed then
     local partial = Scoring.calculate(shift_state.landed)
     score_result = {
       win = false,
       failed_callsign = failed,
+      failure_type = "fuel",
       landed_count = partial.landed_count,
       avg_fuel_pct = 0, -- no efficiency credit on a failed shift
       near_miss_count = partial.near_miss_count,
       total = 0, -- no score for a failed shift
+    }
+    state = STATE_SCORE
+    return
+  end
+
+  local time_failed = Queue.find_time_expired(shift_state)
+  if time_failed then
+    local partial = Scoring.calculate(shift_state.landed)
+    score_result = {
+      win = false,
+      failed_callsign = time_failed,
+      failure_type = "time",
+      landed_count = partial.landed_count,
+      avg_fuel_pct = 0,
+      near_miss_count = partial.near_miss_count,
+      total = 0,
     }
     state = STATE_SCORE
     return
