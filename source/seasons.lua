@@ -18,8 +18,8 @@ Seasons = {}
 --   STW4  120 s fuel, 2500 ft alt (50 s approach) = 70 s margin
 --   QUL3   90 s fuel, 3000 ft alt (60 s approach) = 30 s margin
 --   SVC12 130 s fuel, 3500 ft alt (70 s approach) = 60 s margin
---   GCS1   85 s fuel, 2500 ft alt (50 s approach) = 35 s margin
---   CAM1   90 s fuel, 3000 ft alt (60 s approach) = 30 s margin
+--   GCS1   85 s fuel, 2500 ft alt (50 s approach), time_limit 75 s (25 s margin) — SAR emergency
+--   CAM1   90 s fuel, 3000 ft alt (60 s approach), time_limit 80 s (20 s margin) — medevac emergency
 --   PTA7  110 s fuel, 4000 ft alt (80 s approach) = 30 s margin
 function Seasons.spring()
   return {
@@ -37,11 +37,11 @@ function Seasons.spring()
     },
     {
       time = 85,
-      aircraft = Aircraft.new("GCS1", 85, 2500, "Medical", "SAR crew. Missing hikers. Snowmelt trail."),
+      aircraft = Aircraft.new("GCS1", 85, 2500, "Medical", "SAR crew. Missing hikers. Snowmelt trail.", 75),
     },
     {
       time = 115,
-      aircraft = Aircraft.new("CAM1", 90, 3000, "Medical", "Patient on board. Requesting priority."),
+      aircraft = Aircraft.new("CAM1", 90, 3000, "Medical", "Patient on board. Requesting priority.", 80),
     },
     {
       time = 150,

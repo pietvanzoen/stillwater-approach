@@ -7,6 +7,11 @@ local function make_aircraft(callsign, fuel)
   return Aircraft.new(callsign, fuel, 8000, "Normal")
 end
 
+-- Helper: creates an emergency aircraft with the given time_remaining.
+local function make_emergency(callsign, time_remaining)
+  return Aircraft.new(callsign, 90, 8000, "Medical", nil, time_remaining)
+end
+
 describe("Queue", function()
   describe("Queue.new", function()
     it("returns table with empty landing list", function()
@@ -334,6 +339,60 @@ describe("Queue", function()
       local q = Queue.new()
       q.landing = { make_aircraft("LEAD", 50), make_aircraft("TRAIL", 0) }
       assert.equal("TRAIL", Queue.find_out_of_fuel(q))
+    end)
+  end)
+
+  describe("Queue.find_time_expired", function()
+    it("returns nil when no emergency aircraft are present", function()
+      local q = Queue.new()
+      q.landing = { make_aircraft("A", 90) }
+      q.holding = { make_aircraft("B", 60) }
+      assert.is_nil(Queue.find_time_expired(q))
+    end)
+
+    it("returns nil when emergency aircraft still have time remaining", function()
+      local q = Queue.new()
+      q.landing = { make_emergency("GCS1", 30) }
+      assert.is_nil(Queue.find_time_expired(q))
+    end)
+
+    it("returns callsign of time-expired aircraft in landing", function()
+      local q = Queue.new()
+      q.landing = { make_emergency("GCS1", 0) }
+      assert.equal("GCS1", Queue.find_time_expired(q))
+    end)
+
+    it("returns callsign of time-expired aircraft in holding", function()
+      local q = Queue.new()
+      q.holding = { make_emergency("CAM1", 0) }
+      assert.equal("CAM1", Queue.find_time_expired(q))
+    end)
+
+    it("returns nil when queues are empty", function()
+      local q = Queue.new()
+      assert.is_nil(Queue.find_time_expired(q))
+    end)
+
+    it("ignores a time-expired aircraft that is in the touchdown dwell", function()
+      local q = Queue.new()
+      local ac = make_emergency("GCS1", 0)
+      ac.touchdown_timer = 1.5
+      q.landing = { ac }
+      assert.is_nil(Queue.find_time_expired(q))
+    end)
+
+    it("returns the landing callsign when both queues have expired aircraft", function()
+      local q = Queue.new()
+      q.landing = { make_emergency("LAND1", 0) }
+      q.holding = { make_emergency("HOLD1", 0) }
+      assert.equal("LAND1", Queue.find_time_expired(q))
+    end)
+
+    it("ignores normal aircraft in landing when holding has expired emergency", function()
+      local q = Queue.new()
+      q.landing = { make_aircraft("STW4", 90) }
+      q.holding = { make_emergency("GCS1", 0) }
+      assert.equal("GCS1", Queue.find_time_expired(q))
     end)
   end)
 

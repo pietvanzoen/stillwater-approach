@@ -13,6 +13,14 @@ local function format_fuel(seconds)
   return string.format("%d:%02d", math.floor(s / 60), s % 60)
 end
 
+-- Emergency aircraft show their time countdown ("T: M:SS"); normal aircraft show fuel ("F: M:SS").
+local function format_timer(aircraft)
+  if aircraft.time_remaining ~= nil then
+    return Strings.card.time_prefix .. format_fuel(aircraft.time_remaining)
+  end
+  return Strings.card.fuel_prefix .. format_fuel(aircraft.fuel)
+end
+
 -- Draws the aircraft card as a single-row flight progress strip at position (x, y).
 --
 --   ┌──┬────────┬───────────┬──────────┬──────────────────┐
@@ -52,7 +60,7 @@ function UI.draw_aircraft_card(aircraft, x, y, focused, on_approach)
   local alt_value = on_approach and (math.ceil(aircraft.altitude / 10) * 10) or math.ceil(aircraft.altitude)
   gfx.drawText(alt_prefix .. tostring(alt_value), x + c.COL2_X, text_y)
 
-  gfx.drawText(Strings.card.fuel_prefix .. format_fuel(aircraft.fuel), x + c.COL3_X, text_y)
+  gfx.drawText(format_timer(aircraft), x + c.COL3_X, text_y)
   local situation_text = aircraft.touchdown_timer ~= nil and Strings.card.landed or aircraft.situation
   gfx.drawTextAligned(situation_text, x + c.COL4_CX, text_y, kTextAlignment.center)
   gfx.setFont(gfx.getSystemFont())
@@ -101,7 +109,8 @@ function UI.draw_score_screen(result)
   y = y + DIVIDER_H
 
   if not result.win and result.failed_callsign then
-    local msg = result.failed_callsign .. " " .. Strings.score.out_of_fuel
+    local reason = result.failure_type == "time" and Strings.score.time_expired or Strings.score.out_of_fuel
+    local msg = result.failed_callsign .. " " .. reason
     gfx.drawTextAligned(msg, cx, y, kTextAlignment.center)
     y = y + FAIL_ROW_H
   end
